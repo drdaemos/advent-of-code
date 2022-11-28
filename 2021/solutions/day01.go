@@ -5,6 +5,9 @@ import (
 	"github.com/drdaemos/advent-of-code/utils"
 )
 
+/*
+https://adventofcode.com/2021/day/1
+*/
 func main() {
 	input := utils.GetIntegers(utils.GetInputPath("day01.txt"))
 
