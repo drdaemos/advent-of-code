@@ -52,12 +52,16 @@ func GetIntegers(path string) []int {
 	var result []int
 
 	for scan.Scan() {
-		value, err := strconv.Atoi(scan.Text())
-		check(err)
-		result = append(result, value)
+		result = append(result, ToInt(scan.Text()))
 	}
 
 	check(scan.Err())
 
 	return result
+}
+
+func ToInt(value string) int {
+	number, err := strconv.Atoi(value)
+	check(err)
+	return number
 }
