@@ -20,6 +20,13 @@ func GetInputPath(filename string) string {
 	return file
 }
 
+func GetPackageInput(pkg string) string {
+	path, err := os.Getwd()
+	check(err)
+	file := filepath.Join(path, pkg, "input.txt")
+	return file
+}
+
 func GetStrings(path string) []string {
 	file, err := os.Open(path)
 	check(err)

@@ -1,4 +1,4 @@
-package main
+package day01
 
 import (
 	"fmt"
@@ -6,31 +6,31 @@ import (
 	"sort"
 )
 
-/*
-https://adventofcode.com/2022/day/1
-*/
-func main() {
-	input := utils.GetStrings(utils.GetInputPath("day01.txt"))
+// Main https://adventofcode.com/2022/day/1
+func Main() {
+	input := utils.GetStrings(utils.GetPackageInput("day01"))
 
-	fmt.Println("Total calories:", partOne(input))
+	fmt.Println("Max amount:", PartOne(input))
 
-	top3 := partTwo(input)
-	fmt.Println("Top 3 elves:", top3)
-	fmt.Println("Top 3 Sum:", utils.Sum(top3))
+	sum, top3 := PartTwo(input)
+	fmt.Println("Top 3 sum:", sum)
+	fmt.Println("Top 3 amounts:", top3)
 }
 
-func partOne(input []string) int {
+func PartOne(input []string) int {
 	elfTotals := getTotals(input)
 	_, max := utils.MinMax(elfTotals)
 
 	return max
 }
 
-func partTwo(input []string) []int {
+func PartTwo(input []string) (int, []int) {
 	elfTotals := getTotals(input)
 	sort.Ints(elfTotals)
 
-	return elfTotals[len(elfTotals)-3:]
+	top3 := elfTotals[len(elfTotals)-3:]
+
+	return utils.Sum(top3), top3
 }
 
 func getTotals(input []string) []int {
