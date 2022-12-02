@@ -1,4 +1,4 @@
-package main
+package day03
 
 import (
 	"fmt"
@@ -11,8 +11,8 @@ import (
 /*
 https://adventofcode.com/2021/day/3
 */
-func main() {
-	input := utils.GetStrings(utils.GetInputPath("day03.txt"))
+func Main() {
+	input := utils.GetStrings(utils.GetPackageInput("day03"))
 
 	fmt.Println("Power consumption:", partOne(input))
 	fmt.Println("Life support rating:", partTwo(input))

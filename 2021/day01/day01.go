@@ -1,4 +1,4 @@
-package main
+package day01
 
 import (
 	"fmt"
@@ -8,8 +8,8 @@ import (
 /*
 https://adventofcode.com/2021/day/1
 */
-func main() {
-	input := utils.GetIntegers(utils.GetInputPath("day01.txt"))
+func Main() {
+	input := utils.GetIntegers(utils.GetPackageInput("day01"))
 
 	var previous int
 	var current int
