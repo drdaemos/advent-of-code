@@ -39,5 +39,5 @@ $inputReal = file_get_contents(__DIR__ . '/input.txt');
 
 $lines = explode(PHP_EOL, $inputReal);
 
-echo partOne($lines) . PHP_EOL;
-echo partTwo($lines) . PHP_EOL;
+echo 'Part one: ' . partOne($lines) . PHP_EOL;
+echo 'Part two: ' . partTwo($lines) . PHP_EOL;
