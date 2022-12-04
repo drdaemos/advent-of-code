@@ -4,12 +4,14 @@ This repo contains my solutions to the https://adventofcode.com/ coding challeng
 
 ## Dependencies
 - Go v1.19
+- PHP v7.4
+- Clojure v1.11.1
 
 ## Structure
 Solutions are grouped by the advent year and separated into `day*` folders which contain several files:
 
 - `input.txt` has my personal input in plain text form
-- `solution.go` / `day*.go` has the solution for both parts of the day
+- `solution.*` / `day*.go` has the solution for both parts of the day
 - `solution_test.go` contains tests based on the input provided in the challenge description (with known answer)
 
 ## Usage

@@ -17,6 +17,10 @@ func main() {
 			out, _, _ := utils.ExecuteShell("php ./day03/solution.php")
 			fmt.Print(out)
 		},
+		"day04": func() {
+			out, _, _ := utils.ExecuteShell("(cd day04/ && clojure -M ./solution.clj)")
+			fmt.Print(out)
+		},
 	}
 	flag.Parse()
 
