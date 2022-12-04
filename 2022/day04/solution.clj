@@ -1,5 +1,4 @@
-(ns day04
-  (:require [clojure.spec.alpha :as s]))
+(ns day04)
 
 (defn toIntRange [str]
     (map #(Integer/parseInt %) (clojure.string/split str #"-"))
