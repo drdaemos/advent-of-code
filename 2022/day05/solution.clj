@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]))
 
 (defn split-input-parts [lines]
-   #_{:clj-kondo/ignore [:unresolved-var]}
+  #_{:clj-kondo/ignore [:unresolved-var]}
   (split-with #(not (str/blank? (str %))) lines))
 
 (defn transpose [& xs]
@@ -39,26 +39,21 @@
    stacks
    instructions))
 
-(defn part-one [parts]
-  (apply str (map
-              first
-              (apply-instructions
-               (parse-stacks (first parts))
-               (rest (last parts))
-               false))))
+(defn solve [parts bulk]
+  (let
+   [stack-tops
+    (map
+     first
+     (apply-instructions
+      (parse-stacks (first parts))
+      (rest (last parts))
+      bulk))]
+    (apply str stack-tops)))
 
-(defn part-two [parts]
-  (apply str (map
-              first
-              (apply-instructions
-               (parse-stacks (first parts))
-               (rest (last parts))
-               true))))
-
-(defn Main [] 
+(defn Main []
   #_{:clj-kondo/ignore [:unresolved-var]}
   (let
    [input (str/split-lines (slurp "input.txt"))]
-    (println "Part one:" (part-one (split-input-parts input))) ;; 
-    (println "Part two:" (part-two (split-input-parts input))) ;; 
+    (println "Part one:" (solve (split-input-parts input) false)) ;; ZBDRNPMVH
+    (println "Part two:" (solve (split-input-parts input) true))  ;; WDLPFNNNB
     ))(Main)
