@@ -59,6 +59,6 @@
   #_{:clj-kondo/ignore [:unresolved-var]}
   (let
    [input (-> "input.txt" slurp str/split-lines)]
-    (println "Part one:" (solve (split-input-parts input) false)) ;; ZBDRNPMVH
-    (println "Part two:" (solve (split-input-parts input) true))  ;; WDLPFNNNB
+    (println "Part one:" (-> input split-input-parts (solve false))) ;; ZBDRNPMVH
+    (println "Part two:" (-> input split-input-parts (solve true)))  ;; WDLPFNNNB
     ))(Main)
