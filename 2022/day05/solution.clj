@@ -1,24 +1,29 @@
 (ns solution
   (:require [clojure.string :as str]))
 
-(defn split-input-parts [lines]
+(defn not-empty-line? [line]
   #_{:clj-kondo/ignore [:unresolved-var]}
-  (->> lines
-       (split-with
-        #(-> % str str/blank? not))))
+  (not (str/blank? (str line))))
+
+(defn split-input-parts [lines]
+  (split-with not-empty-line? lines))
 
 (defn transpose [& xs]
   (apply map list xs))
 
+(defn has-letters [string]
+  (some #(Character/isLetter %) string))
+
+(defn clean-stack [string]
+  (->> string
+       (remove #(= \space %))
+       drop-last))
+
 (defn parse-stacks [lines]
-  (mapv
-   (fn [stack]
-     (->> stack
-          (remove #(= \space %))
-          drop-last))
-   (->> lines
-        (apply transpose)
-        (filter (fn [line] (some #(Character/isLetter %) line))))))
+  (->> lines
+       (apply transpose)
+       (filter has-letters)
+       (mapv clean-stack)))
 
 (defn get-top-crates [stack n bulk]
   (if bulk
