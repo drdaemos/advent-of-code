@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]))
 
 (defn split-input-parts [lines]
+   #_{:clj-kondo/ignore [:unresolved-var]}
   (split-with #(not (str/blank? (str %))) lines))
 
 (defn transpose [& xs]
@@ -54,7 +55,8 @@
                (rest (last parts))
                true))))
 
-(defn Main []
+(defn Main [] 
+  #_{:clj-kondo/ignore [:unresolved-var]}
   (let
    [input (str/split-lines (slurp "input.txt"))]
     (println "Part one:" (part-one (split-input-parts input))) ;; 

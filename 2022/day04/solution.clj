@@ -30,6 +30,7 @@
            (map #(apply overlap-pair? (map to-int-range (str/split % #","))) input))))
 
 (defn Main []
+  #_{:clj-kondo/ignore [:unresolved-var]}
   (let [input (str/split-lines (slurp "input.txt"))]
     (println "Part one:" (part-one input)) ;; 582
     (println "Part two:" (part-two input)) ;; 893
