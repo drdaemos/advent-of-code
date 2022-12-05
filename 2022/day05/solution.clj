@@ -25,7 +25,7 @@
     (take n stack)
     (->> stack (take n) reverse)))
 
-(defn move-crates [input bulk n from to]
+(defn move-crates [input bulk [n from to]]
   (as-> input stacks
     (update stacks (- to 1) #(concat %2 %1) (get-top-crates (stacks (- from 1)) n bulk))
     (update stacks (- from 1) #(drop n %))))
@@ -40,8 +40,7 @@
    (fn [acc inst]
      (->> inst
           parse-inst
-          (concat [acc bulk])
-          (apply move-crates)))
+          (move-crates acc bulk)))
    stacks
    instructions))
 
