@@ -12,7 +12,7 @@
 
 (defn Main []
   (let
-   [input (-> "input.txt" slurp)]
+   [input (slurp "input.txt")]
     (println "Part one:" (start-of input 4)) ;; 1848
     (println "Part two:" (start-of input 14)) ;; 2308
     ))(Main)
