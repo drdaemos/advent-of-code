@@ -33,6 +33,10 @@ func main() {
 			out, _, _ := utils.ExecuteShell("(cd day07/ && clojure -M ./solution.clj)")
 			fmt.Print(out)
 		},
+		"day08": func() {
+			out, _, _ := utils.ExecuteShell("(cd day08/ && clojure -M ./solution.clj)")
+			fmt.Print(out)
+		},
 	}
 	flag.Parse()
 
