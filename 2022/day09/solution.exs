@@ -48,11 +48,7 @@ defmodule Solution do
         [move_knot(knot, dir)]
       else
         prev = List.first(rope)
-        dist = distance(prev, knot)
-        knot = cond do
-          dist >= 2 -> drag_knot(prev, knot)
-          true -> knot
-        end
+        knot = if distance(prev, knot) >= 2, do: drag_knot(prev, knot), else: knot
         [knot | rope] # appending because it is faster
       end
     end)
