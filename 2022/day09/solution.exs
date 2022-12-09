@@ -16,12 +16,12 @@ defmodule Solution do
     |> List.to_tuple()
   end
 
-  def move_head({x, y}, dir) do
+  def move_knot({x, y}, dir) do
     case dir do
       :up -> {x, y + 1}
       :down -> {x, y - 1}
-      :right -> {x + 1, y}
       :left -> {x - 1, y}
+      :right -> {x + 1, y}
     end
   end
 
@@ -29,25 +29,23 @@ defmodule Solution do
     :math.sqrt(:math.pow(abs(x_b - x_a), 2) + :math.pow(abs(y_b - y_a), 2))
   end
 
+  def move_if(knot, compfn, dir) do
+    if compfn.(), do: move_knot(knot, dir), else: knot
+  end
+
   def drag_knot({x_a, y_a}, {x_b, y_b}) do
-    cond do
-      (x_a == x_b) and (y_a > y_b) -> {x_b, y_b + 1}    # up
-      (x_a > x_b) and (y_a == y_b) -> {x_b + 1, y_b}    # right
-      (x_a == x_b) and (y_a < y_b) -> {x_b, y_b - 1}    # down
-      (x_a < x_b) and (y_a == y_b) -> {x_b - 1, y_b}    # left
-      (x_a > x_b) and (y_a > y_b) -> {x_b + 1, y_b + 1} # up-right
-      (x_a > x_b) and (y_a < y_b) -> {x_b + 1, y_b - 1} # down-right
-      (x_a < x_b) and (y_a < y_b) -> {x_b - 1, y_b - 1} # down-left
-      (x_a < x_b) and (y_a > y_b) -> {x_b - 1, y_b + 1} # up-left
-      true -> {x_b, y_b}
-    end
+    {x_b, y_b}
+    |> move_if(fn -> y_a > y_b end, :up)
+    |> move_if(fn -> y_a < y_b end, :down)
+    |> move_if(fn -> x_a < x_b end, :left)
+    |> move_if(fn -> x_a > x_b end, :right)
   end
 
   def move_rope(rope, dir) do
     rope
     |> Enum.reduce([], fn knot, rope ->
       if Enum.empty?(rope) do
-        [move_head(knot, dir)]
+        [move_knot(knot, dir)]
       else
         prev = List.first(rope)
         dist = distance(prev, knot)
