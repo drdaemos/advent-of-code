@@ -6,6 +6,7 @@ This repo contains my solutions to the https://adventofcode.com/ coding challeng
 - Go v1.19
 - PHP v7.4
 - Clojure v1.11.1
+- Elixir v1.14
 
 ## Structure
 Solutions are grouped by the advent year and separated into `day*` folders which contain several files:
