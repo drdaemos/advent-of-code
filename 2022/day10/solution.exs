@@ -30,17 +30,22 @@ defmodule Solution do
     case elem(stmt, 0) do
       :noop -> {register, stmt_index + 1, next_delay}
       :addx -> if delay > 0, do: {register, stmt_index, delay - 1}, else: {register + elem(stmt, 1), stmt_index + 1, next_delay}
-      :unknown -> {register, stmt_index, 0}
     end
   end
 
-  def part_one(input) do
-    program = parse_input(input)
+  def execute_program(program) do
     register = 1
-    Enum.to_list(1..220)
+    Enum.to_list(1..240)
     |> Enum.scan({register, 0, peek_delay(0, program)}, &apply_stmt(&1, &2, program))
     |> Enum.map(&elem(&1, 0))
-    |> Enum.slice(18, 201)
+    |> then(fn x -> [register | x] end)
+  end
+
+  def part_one(input) do
+    input
+    |> parse_input()
+    |> execute_program()
+    |> Enum.slice(19, 220)
     |> Enum.take_every(40)
     |> Enum.zip(20..220//40)
     |> Enum.map(&Tuple.product/1)
@@ -49,18 +54,15 @@ defmodule Solution do
 
   def crt_draw({register, cycle}, screen) do
     mod = rem(cycle, 40)
-    char = if Enum.member?((register-1)..(register+1), mod-1), do: "#", else: " "
+    pixel = if abs(register - mod + 1) <= 1, do: "█", else: " "
     newline = if mod == 0, do: "\n", else: ""
-    screen <> char <> newline
+    screen <> pixel <> newline
   end
 
   def part_two(input) do
-    program = parse_input(input)
-    register = 1
-    Enum.to_list(1..240)
-    |> Enum.scan({register, 0, peek_delay(0, program)}, &apply_stmt(&1, &2, program))
-    |> Enum.map(&elem(&1, 0))
-    |> then(fn x -> [1 | x] end)
+    input
+    |> parse_input()
+    |> execute_program()
     |> Enum.zip(1..240)
     |> Enum.reduce("", &crt_draw/2)
   end
