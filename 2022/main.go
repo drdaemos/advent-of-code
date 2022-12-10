@@ -41,6 +41,10 @@ func main() {
 			out, _, _ := utils.ExecuteShell("(cd day09/ && elixir ./solution.exs)")
 			fmt.Print(out)
 		},
+		"day10": func() {
+			out, _, _ := utils.ExecuteShell("(cd day10/ && elixir ./solution.exs)")
+			fmt.Print(out)
+		},
 	}
 	flag.Parse()
 
