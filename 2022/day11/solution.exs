@@ -1,5 +1,4 @@
-defmodule Solution do
-
+defmodule AdventOfCode.TwentyTwo.Day11 do
   def parse_input(path) do
     File.read!(path)
     |> String.trim()
@@ -30,9 +29,11 @@ defmodule Solution do
         |> insert_into(:items, record)
       String.starts_with?(line, "Operation:") ->
         line
-        |> String.split(":")
+        |> String.split("=")
         |> List.last()
-        |> String.trim()
+        |> String.split()
+        |> Enum.drop(1)
+        |> List.to_tuple()
         |> insert_into(:op, record)
       String.starts_with?(line, "Test: divisible by") ->
         get_last_int(line)
@@ -54,7 +55,15 @@ defmodule Solution do
     |> Enum.reduce(%{}, &parse_line/2)
   end
 
-  def inspect_and_throw(index, {monkeys, inspects}) do
+  def apply_math(item, {command, arg}) do
+    arg = if arg == "old", do: item, else: String.to_integer(arg)
+    case command do
+      "*" -> item * arg
+      "+" -> item + arg
+    end
+  end
+
+  def inspect_and_throw(index, monkeys, worry_fn) do
     monkey = monkeys
     |> Enum.at(index)
 
@@ -63,51 +72,61 @@ defmodule Solution do
     if Enum.count(items) > 0 do
       item = hd(items)
 
-      level = Code.eval_string(monkey.op, [old: item])
-      |> elem(0)
-      # |> then(fn x -> floor(x / 3) end)
+      level = item
+      |> apply_math(monkey.op)
+      |> worry_fn.()
 
       to_idx = if rem(level, monkey.test) == 0,
         do: monkey.iftrue,
         else: monkey.iffalse
 
-      new = monkeys
+      updated = monkeys
+      |> List.update_at(index, fn rec -> Map.update(rec, :inspects, 1, &(&1 + 1)) end)
       |> List.update_at(index, fn rec -> Map.update!(rec, :items, &Enum.drop(&1, 1)) end)
-      |> List.update_at(to_idx, fn rec -> Map.update!(rec, :items, fn list -> list ++ [level] end) end)
+      |> List.update_at(to_idx, fn rec -> Map.update!(rec, :items, &(&1 ++ [level])) end)
 
-      inspect_and_throw(index, {new, Map.update(inspects, index, 1, &(&1 + 1))})
+      inspect_and_throw(index, updated, worry_fn)
     else
-      {monkeys, inspects}
+      monkeys
     end
   end
 
-  def play_round(_round, {monkeys, inspects}) do
+  def play_round(monkeys, worry_fn) do
     (0..(Enum.count(monkeys)-1))
-    |> Enum.reduce({monkeys, inspects}, &inspect_and_throw/2)
+    |> Enum.reduce(monkeys, &inspect_and_throw(&1, &2, worry_fn))
+  end
+
+  def count_business(monkeys) do
+    monkeys
+    |> Enum.map(&Map.get(&1, :inspects))
+    |> Enum.sort()
+    |> Enum.reverse()
+    |> Enum.take(2)
+    |> Enum.product()
   end
 
   def part_one(input) do
     monkeys = input
     |> parse_input()
 
-    (1..1000)
-    |> Enum.reduce({monkeys, %{}}, &play_round/2)
-    |> elem(1)
-    |> Map.values()
-    |> Enum.sort()
-    |> Enum.reverse()
-    |> Enum.take(2)
-    |> Enum.product()
-    |> IO.inspect(charlists: :as_lists)
+    (1..20)
+    |> Enum.reduce(monkeys, fn _, acc -> play_round(acc, &(floor(&1 / 3))) end)
+    |> count_business()
   end
 
   def part_two(input) do
-    input
-    0
-  end
+    monkeys = input
+    |> parse_input()
 
+    lcm = monkeys
+    |> Enum.map(&Map.get(&1, :test))
+    |> Enum.product()
+
+    (1..10000)
+    |> Enum.reduce(monkeys, fn _, acc -> play_round(acc, &(rem(&1, lcm))) end)
+    |> count_business()
+  end
 end
 
-IO.puts ("Part one: #{Solution.part_one("input_test.txt")}") # 111210
-# IO.puts ("Part two: ")
-# IO.puts Solution.part_two("input.txt") # EHPZPJGL
+IO.puts ("Part one: #{AdventOfCode.TwentyTwo.Day11.part_one("input.txt")}") # 111210
+IO.puts ("Part two: #{AdventOfCode.TwentyTwo.Day11.part_two("input.txt")}") # 15447387620
