@@ -67,10 +67,8 @@ defmodule AdventOfCode.TwentyTwo.Day11 do
     monkey = monkeys
     |> Enum.at(index)
 
-    items = monkey.items
-
-    if Enum.count(items) > 0 do
-      item = hd(items)
+    if Enum.count(monkey.items) > 0 do
+      item = hd(monkey.items)
 
       level = item
       |> apply_math(monkey.op)
