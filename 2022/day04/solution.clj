@@ -29,9 +29,17 @@
    (filter true?
            (map #(apply overlap-pair? (map to-int-range (str/split % #","))) input))))
 
+(def input-test "2-4,6-8
+2-3,4-5
+5-7,7-9
+2-8,3-7
+6-6,4-6
+2-6,4-8")
+
 (defn Main []
   #_{:clj-kondo/ignore [:unresolved-var]}
-  (let [input (str/split-lines (slurp "input.txt"))]
+  (let 
+   [input (-> "input.txt" slurp (try (catch Exception e input-test)) str/split-lines)]
     (println "Part one:" (part-one input)) ;; 582
     (println "Part two:" (part-two input)) ;; 893
     ))(Main)

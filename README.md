@@ -1,6 +1,6 @@
 # Advent Of Code solutions
 
-This repo contains my solutions to the https://adventofcode.com/ coding challenge.
+This repo contains my solutions to the https://adventofcode.com/ coding challenge. As a self-imposed rule, I try not to rewrite any logic after receiving the answer - only small code-style refactors are done (to maintain the repo in a good shape).
 
 ## Dependencies
 - Go v1.19
@@ -9,11 +9,13 @@ This repo contains my solutions to the https://adventofcode.com/ coding challeng
 - Elixir v1.14
 
 ## Structure
-Solutions are grouped by the advent year and separated into `day*` folders which contain several files:
+Solutions are grouped by the advent year and separated into `day*` folders which might contain several files:
 
-- `input.txt` has my personal input in plain text form
-- `solution.*` / `day*.go` has the solution for both parts of the day
-- `solution_test.go` contains tests based on the input provided in the challenge description (with known answer)
+- `solution.*` has the solution for both parts of the day and example puzzle input provided in the challenge description
+- `input_test.txt` is present when the example puzzle input is too long
+- `solution_test.*` contains tests based on the input provided in the challenge description (with known answer)
+
+Additionally, if `input.txt` is present in the day folder, it will be used instead of example input to calculate the answer.
 
 ## Usage
 To run the solution and see the result based on the given input, run the following:

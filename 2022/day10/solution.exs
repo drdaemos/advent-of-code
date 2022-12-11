@@ -1,8 +1,8 @@
 defmodule Solution do
   @command %{"noop" => :noop, "addx" => :addx}
 
-  def parse_input(path) do
-    File.read!(path)
+  def parse_input(path, default) do
+    (with {:ok, text} <- File.read(path), do: text, else: (_ -> File.read!(default)))
     |> String.trim()
     |> String.split("\n")
     |> Enum.map(&parse_statement/1)
@@ -42,8 +42,7 @@ defmodule Solution do
   end
 
   def part_one(input) do
-    input
-    |> parse_input()
+    parse_input(input, "input_test.txt")
     |> execute_program()
     |> Enum.slice(19, 220)
     |> Enum.take_every(40)
@@ -60,8 +59,7 @@ defmodule Solution do
   end
 
   def part_two(input) do
-    input
-    |> parse_input()
+    parse_input(input, "input_test.txt")
     |> execute_program()
     |> Enum.zip(1..240)
     |> Enum.reduce("", &crt_draw/2)

@@ -16,9 +16,10 @@
        (drop (inc (count (take-while output? (rest lines)))) lines)))))
 
 #_{:clj-kondo/ignore [:unresolved-var]}
-(defn read-input [file]
+(defn read-input [file default]
   (->> file
        slurp
+       (try (catch Exception e default))
        string/split-lines
        group-entries))
 
@@ -81,9 +82,33 @@
          (filter #(>= % to-free))
          first)))
 
+(def input-test "$ cd /
+$ ls
+dir a
+14848514 b.txt
+8504156 c.dat
+dir d
+$ cd a
+$ ls
+dir e
+29116 f
+2557 g
+62596 h.lst
+$ cd e
+$ ls
+584 i
+$ cd ..
+$ cd ..
+$ cd d
+$ ls
+4060174 j
+8033020 d.log
+5626152 d.ext
+7214296 k")
+
 (defn Main []
   (let
-   [dirs (recur-dir-sizes (dir-sizes (read-input "input.txt")))]
+   [dirs (recur-dir-sizes (dir-sizes (read-input "input.txt" input-test)))]
     (println "Part one:" (part-one dirs)) ;; 1141028
     (println "Part two:" (part-two dirs 70000000 30000000)) ;; 8278005
     ))(Main)

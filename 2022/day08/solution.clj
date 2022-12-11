@@ -5,9 +5,10 @@
 (defn to-int [str]
   (Integer/parseInt str))
 
-(defn read-grid [file]
+(defn read-grid [file default]
   (->> file
        slurp
+       (try (catch Exception e default))
        split-lines
        (mapv #(clojure.string/split % #""))
        (mapv #(mapv to-int %))))
@@ -86,9 +87,15 @@
       (recur (next-tree grid pos) (max (raycast grid * cast-scenic pos) highscore))
       highscore)))
 
+(def input-test "30373
+25512
+65332
+33549
+35390")
+
 (defn Main []
   (let
-   [grid (read-grid "input.txt")]
+   [grid (read-grid "input.txt" input-test)]
     (println "Part one:" (count-visible grid)) ;; 1560
     (println "Part two:" (count-scenic grid)) ;; 252000
     ))(Main)

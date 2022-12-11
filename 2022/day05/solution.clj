@@ -55,10 +55,20 @@
     (map first tops)
     (apply str tops)))
 
+(def input-test "    [D]    
+[N] [C]    
+[Z] [M] [P]
+ 1   2   3 
+
+move 1 from 2 to 1
+move 3 from 1 to 3
+move 2 from 2 to 1
+move 1 from 1 to 2")
+
 (defn Main []
   #_{:clj-kondo/ignore [:unresolved-var]}
   (let
-   [input (-> "input.txt" slurp str/split-lines)]
+   [input (-> "input.txt" slurp (try (catch Exception e input-test)) str/split-lines)]
     (println "Part one:" (-> input split-input-parts (solve false))) ;; ZBDRNPMVH
     (println "Part two:" (-> input split-input-parts (solve true)))  ;; WDLPFNNNB
     ))(Main)

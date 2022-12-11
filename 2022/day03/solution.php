@@ -35,9 +35,18 @@ function partTwo(array $input): int
     return $sum;
 }
 
-$inputReal = file_get_contents(__DIR__ . '/input.txt');
+$input = file_exists(__DIR__ . '/input.txt') 
+    ? file_get_contents(__DIR__ . '/input.txt') 
+    : <<<TEST
+vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw
+TEST;
 
-$lines = explode(PHP_EOL, $inputReal);
+$lines = explode(PHP_EOL, $input);
 
-echo 'Part one: ' . partOne($lines) . PHP_EOL;
-echo 'Part two: ' . partTwo($lines) . PHP_EOL;
+echo 'Part one: ' . partOne($lines) . PHP_EOL; // 8401
+echo 'Part two: ' . partTwo($lines) . PHP_EOL; // 2641

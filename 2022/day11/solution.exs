@@ -1,6 +1,6 @@
 defmodule AdventOfCode.TwentyTwo.Day11 do
-  def parse_input(path) do
-    File.read!(path)
+  def parse_input(path, default) do
+    (with {:ok, text} <- File.read(path), do: text, else: (_ -> File.read!(default)))
     |> String.trim()
     |> String.split("\n\n")
     |> Enum.map(&parse_record/1)
@@ -104,8 +104,7 @@ defmodule AdventOfCode.TwentyTwo.Day11 do
   end
 
   def part_one(input) do
-    monkeys = input
-    |> parse_input()
+    monkeys = parse_input(input, "input_test.txt")
 
     (1..20)
     |> Enum.reduce(monkeys, fn _, acc -> play_round(acc, &(floor(&1 / 3))) end)
@@ -113,8 +112,7 @@ defmodule AdventOfCode.TwentyTwo.Day11 do
   end
 
   def part_two(input) do
-    monkeys = input
-    |> parse_input()
+    monkeys = parse_input(input, "input_test.txt")
 
     lcm = monkeys
     |> Enum.map(&Map.get(&1, :test))

@@ -1,8 +1,8 @@
 defmodule Solution do
   @directions %{"U" => :up, "R" => :right, "L" => :left, "D" => :down}
 
-  def parse_input(path) do
-    File.read!(path)
+  def parse_input(path, default) do
+    (with {:ok, text} <- File.read(path), do: text, else: (_ -> default))
     |> String.trim()
     |> String.split("\n")
     |> Enum.map(&parse_rule/1)
@@ -73,13 +73,24 @@ defmodule Solution do
     |> Enum.count()
   end
 
+  @input_test """
+  R 5
+  U 8
+  L 8
+  D 3
+  R 17
+  D 10
+  L 25
+  U 20
+  """
+
   def part_one(input) do
-    parse_input(input)
+    parse_input(input, @input_test)
     |> apply_rules(List.duplicate({0, 0}, 2))
   end
 
   def part_two(input) do
-    parse_input(input)
+    parse_input(input, @input_test)
     |> apply_rules(List.duplicate({0, 0}, 10))
   end
 
