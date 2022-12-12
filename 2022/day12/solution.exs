@@ -38,8 +38,12 @@ defmodule AdventOfCode.TwentyTwo.Day12 do
     end)
   end
 
-  def dist_g(x, y) do
+  def dist_g_up(x, y) do
     if y - x > 1, do: 100000, else: 1
+  end
+  
+  def dist_g_down(x, y) do
+    if x - y > 1, do: 100000, else: 1
   end
 
   def dist_h({x_a, y_a}, {x_b, y_b}) do
@@ -59,47 +63,41 @@ defmodule AdventOfCode.TwentyTwo.Day12 do
     end
   end
 
-  def a_star_loop(open, closed, {map, goal}=context, iterations) do
-    if Heap.size(open) > 0 and iterations <= 999999 do
+  def a_star_loop(open, closed, {map, h_fn, g_fn, goal_fn}=context, iterations) do
+    if Heap.size(open) > 0 and iterations <= Enum.count(map) do
       {current, rest_open} = Heap.split(open)
-      IO.inspect(Heap.size(rest_open))
-      IO.inspect("#{elem(current.pos, 0)}, #{elem(current.pos, 1)} = #{current.f}")
       closed = MapSet.put(closed, current.pos)
 
-      if (current.pos == goal) do
+      if goal_fn.(current.pos) do
         return_path(current)
       else
-        rest_open = neighbours(current.pos, map)
-        |> Enum.reduce(rest_open, fn nbr, acc ->
+        updated = Enum.reduce(neighbours(current.pos, map), rest_open, fn nbr, acc ->
           if nbr in closed do
             acc
           else
             node = to_node(
               nbr,
-              current.g + dist_g(map[current.pos], map[nbr]),
-              dist_h(nbr, goal),
+              current.g + g_fn.(map[current.pos], map[nbr]),
+              h_fn.(nbr),
               current)
 
-            unless Enum.find(acc, fn x -> x.pos == node.pos && x.g < node.g end), do: Heap.push(acc, node), else: acc
+            unless Enum.find(acc, fn x -> x.pos == node.pos && x.g <= node.g end), do: Heap.push(acc, node), else: acc
           end
         end)
 
-        a_star_loop(rest_open, closed, context, iterations+1)
+        a_star_loop(updated, closed, context, iterations+1)
       end
     else
-      IO.inspect(iterations)
-      # IO.inspect(open)
-      IO.inspect(closed)
       nil
     end
   end
 
-  def find_path(map, start, goal) do
+  def find_path(map, start, h_fn, g_fn, goal_fn) do
     ordering = fn x, y -> x.f < y.f end
     open = Heap.new(ordering) |> Heap.push(to_node(start, 0, 0))
     closed = MapSet.new()
 
-    a_star_loop(open, closed, {map, goal}, 0)
+    a_star_loop(open, closed, {map, h_fn, g_fn, goal_fn}, 0)
   end
 
   @input_test """
@@ -112,18 +110,25 @@ defmodule AdventOfCode.TwentyTwo.Day12 do
 
   def part_one(input) do
     map = parse_input(input, @input_test)
-    IO.inspect(map)
-    path = find_path(map, map[:start], map[:goal])
+    goal_fn = fn pos -> pos == map[:goal] end
+    h_fn = fn pos -> dist_h(pos, map[:goal]) end
+    path = find_path(map, map[:start], h_fn, &dist_g_up/2, goal_fn)
 
     unless is_nil(path), do: Enum.count(path) - 1, else: "No path found"
   end
 
   def part_two(input) do
-    parse_input(input, @input_test)
-    # |> apply_rules(List.duplicate({0, 0}, 10))
+    map = parse_input(input, @input_test)
+
+    goal_fn = fn pos -> map[pos] == 97 end
+    h_fn = fn _ -> 0 end # disabling heuristic to revert to Dijkstra algo
+    path = find_path(map, map[:goal], h_fn, &dist_g_down/2, goal_fn)
+
+    unless is_nil(path), do: Enum.count(path) - 1, else: "No path found"
   end
+
 
 end
 
 IO.puts("Part one: #{AdventOfCode.TwentyTwo.Day12.part_one("input.txt")}") #
-# IO.puts("Part two: #{AdventOfCode.TwentyTwo.Day12.part_two("input.txt")}") #
+IO.puts("Part two: #{AdventOfCode.TwentyTwo.Day12.part_two("input.txt")}") #
