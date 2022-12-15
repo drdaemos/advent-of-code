@@ -6,6 +6,7 @@ import (
 
 	"github.com/drdaemos/advent-of-code/2022/day01"
 	"github.com/drdaemos/advent-of-code/2022/day02"
+	"github.com/drdaemos/advent-of-code/2022/day14"
 	"github.com/drdaemos/advent-of-code/utils"
 )
 
@@ -57,6 +58,8 @@ func main() {
 			out, _, _ := utils.ExecuteShell("(cd day13/ && elixir ./solution.exs)")
 			fmt.Print(out)
 		},
+		"day14":    day14.Main,
+		"day14vis": day14.Visualization,
 	}
 	flag.Parse()
 
