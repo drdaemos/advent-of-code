@@ -4,3 +4,7 @@
 deps
 **/input.txt
 **/_build
+
+# Added by cargo
+
+/target
