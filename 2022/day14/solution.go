@@ -1,6 +1,7 @@
 package day14
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -86,11 +87,7 @@ func ParseCave(input []string) (plane2d, int, int) {
 	return cave, leftmostX, lowestY
 }
 
-func SandNextPos(unit pos, cave plane2d, lowestY int) pos {
-	if unit.y >= lowestY {
-		return pos{-1, -1}
-	}
-
+func SandNextPos(unit pos, cave plane2d) pos {
 	under := cave[pos{unit.x, unit.y + 1}]
 	if under == Air {
 		return pos{unit.x, unit.y + 1}
@@ -119,12 +116,73 @@ func PosEquals(a pos, b pos) bool {
 	return a.x == b.x && a.y == b.y
 }
 
+func moveActiveSand(unit pos, cave plane2d, bottom int, mode string) (pos, error) {
+	moved := SandNextPos(unit, cave)
+
+	if moved.y >= bottom+2 {
+		err := lo.If(mode == abyss, ErrAbyssReached).Else(ErrUnitRested)
+		return moved, err
+	}
+
+	delete(cave, unit)
+	cave[moved] = Sand
+
+	if PosEquals(unit, moved) {
+		if (mode == abyss || !PosEquals(moved, pos{500, 0})) {
+			return moved, ErrUnitRested
+		} else {
+			return moved, ErrFloorFilled
+		}
+	} else {
+		return moved, nil
+	}
+}
+
+func simulateSand(cave plane2d, bottom int, mode string) int {
+	rested := 0
+	sands := make([]pos, 0)
+
+	for {
+		// produce new sand unit
+		if len(sands) == 0 {
+			sands = append(sands, AddSand(cave))
+		}
+
+		updated := make([]pos, 0)
+
+		// update existing non rested
+		for _, unit := range sands {
+			moved, err := moveActiveSand(unit, cave, bottom, mode)
+			if err != nil {
+				switch {
+				case errors.Is(err, ErrUnitRested):
+					rested++
+					updated = append(updated, AddSand(cave))
+				case errors.Is(err, ErrAbyssReached):
+					return rested
+				case errors.Is(err, ErrFloorFilled):
+					rested++
+					return rested
+				}
+			} else {
+				updated = append(updated, moved)
+
+				// forces sand mechanics as in the challenge
+				// only one unit moves until its rested
+				break
+			}
+		}
+
+		sands = updated
+	}
+}
+
 func PartOne(input []string) int {
-	cave, _, _ := ParseCave(input)
-	fmt.Println(cave)
-	return 0
+	cave, _, bottomY := ParseCave(input)
+	return simulateSand(cave, bottomY, abyss)
 }
 
 func PartTwo(input []string) int {
-	return 0
+	cave, _, bottomY := ParseCave(input)
+	return simulateSand(cave, bottomY, floor)
 }

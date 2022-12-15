@@ -2,6 +2,7 @@ package day14
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"time"
 
@@ -21,7 +22,8 @@ type Vis struct {
 	tick    int
 	event   chan Event
 	cave    plane2d
-	sand    pos
+	mode    string
+	sands   []pos
 	rested  int
 }
 
@@ -30,12 +32,21 @@ type Event struct {
 }
 
 const (
+	abyss      = "abyss"
+	floor      = "floor"
 	halt       = "halt"
 	scrollup   = "scrollup"
 	scrolldown = "scrolldown"
 )
 
+var ErrFloorFilled = errors.New("floor has been filled")
+var ErrAbyssReached = errors.New("abyss has been reached")
+var ErrUnitRested = errors.New("unit has come to rest")
+
 func Visualization() {
+	flag.Parse()
+	mode := lo.If(flag.Arg(1) == abyss, abyss).Else(floor)
+
 	input := utils.GetStrings(utils.GetPackageInput("day14")) // 692
 
 	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
@@ -48,9 +59,6 @@ func Visualization() {
 	screen.Clear()
 
 	quit := func() {
-		// You have to catch panics in a defer, clean up, and
-		// re-raise them - otherwise your application can
-		// die without leaving any diagnostic trace.
 		maybePanic := recover()
 		screen.Fini()
 		if maybePanic != nil {
@@ -62,7 +70,7 @@ func Visualization() {
 
 	cave, leftX, bottomY := ParseCave(input)
 
-	ticker := time.NewTicker(1 * time.Millisecond)
+	ticker := time.NewTicker(1 * time.Microsecond)
 	defer ticker.Stop()
 
 	event := make(chan Event)
@@ -78,8 +86,9 @@ func Visualization() {
 		ticker:  ticker,
 		tick:    0,
 		event:   event,
-		sand:    pos{0, 0},
-		rested:  -1,
+		mode:    mode,
+		sands:   make([]pos, 0),
+		rested:  0,
 	}
 
 	go eventLoop(screen, event)
@@ -116,31 +125,37 @@ func update(context *Vis) {
 	if !context.pause {
 		context.tick++
 
-		if PosEquals(context.sand, pos{0, 0}) {
-			context.sand = AddSand(context.cave)
-			context.rested++
-		} else {
-			moved, err := moveActiveSand(context)
-			if err != nil {
-				context.pause = true
-			}
-			context.sand = moved
+		// produce new sand unit
+		if len(context.sands) == 0 {
+			context.sands = append(context.sands, AddSand(context.cave))
 		}
-	}
-}
 
-func moveActiveSand(context *Vis) (pos, error) {
-	moved := SandNextPos(context.sand, context.cave, context.bottomY+1)
-	if PosEquals(moved, pos{-1, -1}) {
-		return moved, errors.New("sand fell in abyss")
-	}
-	delete(context.cave, context.sand)
-	context.cave[moved] = Sand
+		updated := make([]pos, 0)
 
-	if PosEquals(context.sand, moved) {
-		return pos{0, 0}, nil
-	} else {
-		return moved, nil
+		// update existing non rested
+		for _, unit := range context.sands {
+			moved, err := moveActiveSand(unit, context.cave, context.bottomY, context.mode)
+			if err != nil {
+				switch {
+				case errors.Is(err, ErrUnitRested):
+					context.rested++
+					updated = append(updated, AddSand(context.cave))
+				case errors.Is(err, ErrAbyssReached):
+					context.pause = true
+				case errors.Is(err, ErrFloorFilled):
+					context.rested++
+					context.pause = true
+				}
+			} else {
+				updated = append(updated, moved)
+
+				// forces sand mechanics as in the challenge
+				// only one unit moves until its rested
+				break
+			}
+		}
+
+		context.sands = updated
 	}
 }
 
@@ -175,9 +190,10 @@ func render(context *Vis) {
 	white := tcell.StyleDefault.Foreground(tcell.ColorLightGoldenrodYellow).Background(tcell.ColorDarkBlue)
 	yellow := tcell.StyleDefault.Foreground(tcell.ColorLightYellow).Background(tcell.ColorBlack)
 	brown := tcell.StyleDefault.Foreground(tcell.ColorBurlyWood).Background(tcell.ColorBlack)
+	bottom := lo.If(context.mode == abyss, '▞').Else('╦')
 
 	drawCave(context.screen, context.cave, context.leftX-10, context.yOffset, brown, yellow)
-	drawBottom(context.screen, context.bottomY+5, context.yOffset, brown)
+	drawBottom(context.screen, context.bottomY+2, context.yOffset, brown, bottom)
 	drawText(context.screen, 0, 0, 20, 1, fmt.Sprintf("Screen: %d:%d", 0, context.yOffset), white)
 	drawText(context.screen, 0, 1, 20, 2, fmt.Sprintf("Cave: %d:%d", context.leftX, context.bottomY), white)
 	drawText(context.screen, 0, 2, 20, 3, fmt.Sprintf("Tick: %d", context.tick), white)
@@ -186,9 +202,9 @@ func render(context *Vis) {
 	context.screen.Show()
 }
 
-func drawBottom(s tcell.Screen, bottomY int, vertOffset int, style tcell.Style) {
+func drawBottom(s tcell.Screen, bottomY int, vertOffset int, style tcell.Style, symbol rune) {
 	for x := 0; x < 100; x++ {
-		s.SetContent(x, bottomY-vertOffset, '╦', nil, style)
+		s.SetContent(x, bottomY-vertOffset, symbol, nil, style)
 	}
 }
 
