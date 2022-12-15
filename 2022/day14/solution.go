@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/drdaemos/advent-of-code/utils"
-	"github.com/gdamore/tcell/v2"
 	"github.com/samber/lo"
 )
 
@@ -13,12 +12,18 @@ type pos struct {
 	x, y int
 }
 
+type plane2d = map[pos]string
+
 const (
-	Air  string = "."
-	Rock string = "█"
-	Sand string = "o"
+	Air  string = ""
+	Rock string = "▓"
+	Sand string = "░"
 	Flow string = "~"
 )
+
+const InputTest = `
+498,4 -> 498,6 -> 496,6
+503,4 -> 502,4 -> 502,9 -> 494,9`
 
 // Main https://adventofcode.com/2022/day/14
 func Main() {
@@ -28,88 +33,22 @@ func Main() {
 	fmt.Println("Part two:", PartTwo(input))
 }
 
-func Visualization() {
-	input := utils.GetStrings(utils.GetPackageInput("day14"))
-
-	defStyle := tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
-	// style := tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorPurple)
-	screen := lo.Must(tcell.NewScreen())
-	if err := screen.Init(); err != nil {
-		panic(err)
-	}
-
-	// xmax, ymax := screen.Size()
-
-	screen.SetStyle(defStyle)
-	screen.Clear()
-
-	cave := ParseCave(input)
-	DrawCave(screen, cave)
-
-	// screen.SetContent(10, 10, tcell.RuneHLine, nil, style)
-	// screen.SetContent(20, 20, tcell.RuneHLine, nil, style)
-	// drawText(screen, 10, 10, 50, 20, style, fmt.Sprint(xmax, ymax))
-
-	quit := func() {
-		// You have to catch panics in a defer, clean up, and
-		// re-raise them - otherwise your application can
-		// die without leaving any diagnostic trace.
-		maybePanic := recover()
-		screen.Fini()
-		if maybePanic != nil {
-			panic(maybePanic)
-		}
-	}
-	defer quit()
-
-	// Event loop
-	for {
-		// Update screen
-		screen.Show()
-
-		// Poll event
-		ev := screen.PollEvent()
-
-		// Process event
-		switch ev := ev.(type) {
-		case *tcell.EventResize:
-			screen.Sync()
-		case *tcell.EventKey:
-			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
-				return
-			} else if ev.Key() == tcell.KeyCtrlL {
-				screen.Sync()
-			} else if ev.Rune() == 'C' || ev.Rune() == 'c' {
-				screen.Clear()
-			}
-		}
-	}
-}
-
-func drawText(s tcell.Screen, x1, y1, x2, y2 int, style tcell.Style, text string) {
-	row := y1
-	col := x1
-	for _, r := range text {
-		s.SetContent(col, row, r, nil, style)
-		col++
-		if col >= x2 {
-			row++
-			col = x1
-		}
-		if row > y2 {
-			break
-		}
-	}
-}
-
-func ParseCave(input []string) map[pos]string {
+func ParseCave(input []string) (plane2d, int, int) {
 	cave := make(map[pos]string)
+	lowestY := 0
+	leftmostX := 999
 
 	for i := 0; i < len(input); i++ {
 		points := lo.Map(
 			strings.Split(input[i], "->"),
 			func(x string, _ int) pos {
 				parts := lo.Map(strings.Split(strings.TrimSpace(x), ","), func(item string, _ int) int { return utils.ToInt(item) })
+				if parts[0] < leftmostX {
+					leftmostX = parts[0]
+				}
+				if parts[1] > lowestY {
+					lowestY = parts[1]
+				}
 				return pos{parts[0], parts[1]}
 			},
 		)
@@ -144,19 +83,44 @@ func ParseCave(input []string) map[pos]string {
 		}
 	}
 
-	return cave
+	return cave, leftmostX, lowestY
 }
 
-func DrawCave(screen tcell.Screen, cave map[pos]string) {
-	style := tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorPurple)
-	for pos, cell := range cave {
-		runes := []rune(cell)
-		screen.SetContent(pos.x-400, pos.y-10, runes[0], nil, style)
+func SandNextPos(unit pos, cave plane2d, lowestY int) pos {
+	if unit.y >= lowestY {
+		return pos{-1, -1}
 	}
+
+	under := cave[pos{unit.x, unit.y + 1}]
+	if under == Air {
+		return pos{unit.x, unit.y + 1}
+	}
+
+	left := cave[pos{unit.x - 1, unit.y + 1}]
+	if left == Air {
+		return pos{unit.x - 1, unit.y + 1}
+	}
+
+	right := cave[pos{unit.x + 1, unit.y + 1}]
+	if right == Air {
+		return pos{unit.x + 1, unit.y + 1}
+	}
+
+	return unit
+}
+
+func AddSand(cave plane2d) pos {
+	cave[pos{500, 0}] = Sand
+
+	return pos{500, 0}
+}
+
+func PosEquals(a pos, b pos) bool {
+	return a.x == b.x && a.y == b.y
 }
 
 func PartOne(input []string) int {
-	cave := ParseCave(input)
+	cave, _, _ := ParseCave(input)
 	fmt.Println(cave)
 	return 0
 }
