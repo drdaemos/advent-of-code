@@ -1,4 +1,5 @@
 defmodule AdventOfCode.TwentyTwo.Day12 do
+  import AdventOfCode.Pathfinding
 
   def fix_start_goal_vals(val) do
     cond do
@@ -30,14 +31,6 @@ defmodule AdventOfCode.TwentyTwo.Day12 do
     |> to_2d_map()
   end
 
-  def neighbours({x, y}, map) do
-    [{0,-1}, {0,1}, {1,0}, {-1,0}]
-    |> Enum.reduce([], fn {nx, ny}, nbs ->
-      pos = {x + nx, y + ny}
-      if Map.has_key?(map, pos), do: nbs ++ [pos], else: nbs
-    end)
-  end
-
   def dist_g_up(x, y) do
     if y - x > 1, do: 100000, else: 1
   end
@@ -46,58 +39,16 @@ defmodule AdventOfCode.TwentyTwo.Day12 do
     if x - y > 1, do: 100000, else: 1
   end
 
-  def dist_h({x_a, y_a}, {x_b, y_b}) do
+  def neighbours({x, y}, map) do
+    [{0,-1}, {0,1}, {1,0}, {-1,0}]
+    |> Enum.reduce([], fn {nx, ny}, nbs ->
+      pos = {x + nx, y + ny}
+      if Map.has_key?(map, pos), do: nbs ++ [pos], else: nbs
+    end)
+  end
+  
+  def dist_pythagorean({x_a, y_a}, {x_b, y_b}) do
     ceil(:math.sqrt(:math.pow(abs(x_b - x_a), 2) + :math.pow(abs(y_b - y_a), 2)))
-  end
-
-  def to_node(pos, g, h, parent_node \\ nil) do
-    parent = if is_nil(parent_node), do: nil, else: %{parent: parent_node.parent, pos: parent_node.pos}
-    %{pos: pos, parent: parent, g: g, f: g + h}
-  end
-
-  def return_path(current, path \\ []) do
-    unless is_nil(current) do
-      return_path(current[:parent], path ++ [current])
-    else
-      Enum.reverse(path)
-    end
-  end
-
-  def a_star_loop(open, closed, {map, h_fn, g_fn, goal_fn}=context, iterations) do
-    if Heap.size(open) > 0 and iterations <= Enum.count(map) do
-      {current, rest_open} = Heap.split(open)
-      closed = MapSet.put(closed, current.pos)
-
-      if goal_fn.(current.pos) do
-        return_path(current)
-      else
-        updated = Enum.reduce(neighbours(current.pos, map), rest_open, fn nbr, acc ->
-          if nbr in closed do
-            acc
-          else
-            node = to_node(
-              nbr,
-              current.g + g_fn.(map[current.pos], map[nbr]),
-              h_fn.(nbr),
-              current)
-
-            unless Enum.find(acc, fn x -> x.pos == node.pos && x.g <= node.g end), do: Heap.push(acc, node), else: acc
-          end
-        end)
-
-        a_star_loop(updated, closed, context, iterations+1)
-      end
-    else
-      nil
-    end
-  end
-
-  def find_path(map, start, h_fn, g_fn, goal_fn) do
-    ordering = fn x, y -> x.f < y.f end
-    open = Heap.new(ordering) |> Heap.push(to_node(start, 0, 0))
-    closed = MapSet.new()
-
-    a_star_loop(open, closed, {map, h_fn, g_fn, goal_fn}, 0)
   end
 
   @input_test """
@@ -111,8 +62,8 @@ defmodule AdventOfCode.TwentyTwo.Day12 do
   def part_one(input) do
     map = parse_input(input, @input_test)
     goal_fn = fn pos -> pos == map[:goal] end
-    h_fn = fn pos -> dist_h(pos, map[:goal]) end
-    path = find_path(map, map[:start], h_fn, &dist_g_up/2, goal_fn)
+    h_fn = fn pos -> dist_pythagorean(pos, map[:goal]) end
+    path = find_path(map, map[:start], h_fn, &dist_g_up/2, goal_fn, &neighbours/2)
 
     unless is_nil(path), do: Enum.count(path) - 1, else: "No path found"
   end
@@ -122,7 +73,7 @@ defmodule AdventOfCode.TwentyTwo.Day12 do
 
     goal_fn = fn pos -> map[pos] == 97 end
     h_fn = fn _ -> 0 end # disabling heuristic to revert to Dijkstra algo
-    path = find_path(map, map[:goal], h_fn, &dist_g_down/2, goal_fn)
+    path = find_path(map, map[:goal], h_fn, &dist_g_down/2, goal_fn, &neighbours/2)
 
     unless is_nil(path), do: Enum.count(path) - 1, else: "No path found"
   end
