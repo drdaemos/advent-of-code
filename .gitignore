@@ -1,10 +1,14 @@
-.clj-kondo
-.lsp
-.calva
-deps
 **/input.txt
 **/_build
 
-# Added by cargo
-
+# clojure
+.clj-kondo
+.lsp
+.calvadeps
+# rust
 /target
+# go
+/vendor
+# elixir
+/deps
+.elixir_ls
