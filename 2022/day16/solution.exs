@@ -39,7 +39,7 @@ defmodule AdventOfCode.TwentyTwo.Day16 do
       if flow != 0, do: 1/flow, else: 1
     end
 
-    def path_cost(path, graph, opened, remaining) do
+    def path_cost(path, graph, opened) do
       trace = walk_path(tl(path), graph, opened)
       flow = Enum.filter(trace, fn {action, _, _} ->
         action == :open
@@ -48,8 +48,7 @@ defmodule AdventOfCode.TwentyTwo.Day16 do
       |> Enum.sum()
 
       steps = Enum.count(trace)
-      cost = flow / :math.pow(steps, 2)
-      cost # TODO: fix cost function
+      flow / :math.pow(steps, 2)
     end
 
     def walk_path(path, graph, opened, trace \\ []) do
@@ -64,43 +63,67 @@ defmodule AdventOfCode.TwentyTwo.Day16 do
       end
     end
 
-    def disable_next_valve(graph, current \\ "AA", opened \\ [], remaining) do
-      paths = Map.filter(graph, fn {valve, {flow, edges}} -> flow > 0 && !(valve in opened) end)
+    def disable_next_valve(graph, current \\ "AA", opened \\ []) do
+      Map.filter(graph, fn {valve, {flow, _}} -> flow > 0 && !(valve in opened) end)
       |> Enum.map(fn {key, _} ->
         find_path(graph, current, &h_noop/1, &cost_g/2, &(&1 == key), &edges/2, 1000)
       end)
       |> Enum.map(fn path -> Enum.map(path, fn node -> node.pos end) end)
-      |> Enum.sort_by(&path_cost(&1, graph, opened, remaining), :desc)
-
-      if Enum.count(paths) > 0 and remaining > 0 do
-        List.first(paths)
-        |> tl()
-        |> walk_path(graph, opened)
-      else
-        nil
-      end
+      |> Enum.sort_by(&path_cost(&1, graph, opened), :desc)
+      |> Enum.take(2)
+      |> Enum.map(fn path -> walk_path(tl(path), graph, opened) end)
     end
 
-    def sum_pressure(path) do
-      Enum.reduce(1..30, {path, 0, 0}, fn _, {remaining, released, releasing} ->
+    def sum_pressure(path, minutes) do
+      Enum.reduce(1..minutes, {path, 0, 0}, fn _, {remaining, released, releasing} ->
         {_,_,flow} = List.first(remaining, {0,0,0})
         {Enum.drop(remaining, 1), released + releasing, flow + releasing}
       end)
       |> elem(1)
     end
 
-    def find_max_pressure(graph, current \\ "AA", opened \\ [], path \\ [], remaining \\ 30) do
-      trace = disable_next_valve(graph, current, opened, remaining)
-      unless is_nil(trace) do
-        start = List.last(trace) |> elem(1)
-        valves = Enum.filter(trace, &(elem(&1, 0) == :open))
-        |> Enum.map(&(elem(&1, 1)))
-        opened = opened ++ valves
-        find_max_pressure(graph, start, opened, path ++ trace, remaining - Enum.count(trace))
+    def simulate_paths(graph, remaining, minutes, opened \\ [], current \\ "AA", path \\ []) do
+      traces = disable_next_valve(graph, current, opened)
+      if Enum.count(traces) > 0 and remaining > 0 do
+        Enum.map(traces, fn trace ->
+          start = List.last(trace) |> elem(1)
+          valves = Enum.filter(trace, &(elem(&1, 0) == :open)) |> Enum.map(&(elem(&1, 1)))
+          opened = opened ++ valves
+          simulate_paths(graph, remaining - Enum.count(trace), minutes, opened, start, path ++ trace)
+        end)
+        |> Enum.sort(:desc)
+        |> hd()
       else
-        IO.inspect(path)
-        sum_pressure(path)
+        sum_pressure(path, minutes)
       end
+    end
+
+    def combinations(0, _), do: [[]]
+    def combinations(_, []), do: []
+    def combinations(n, [x|xs]) do
+      (for y <- combinations(n - 1, xs), do: [x|y]) ++ combinations(n, xs)
+    end
+
+    def partitions(graph) do
+      flowing = Map.filter(graph, fn {_, {flow, _}} -> flow > 0 end) |> Map.keys()
+      num = ceil(Enum.count(flowing) / 2)
+      combinations = combinations(num, flowing)
+      Enum.map(combinations, fn set -> {set, flowing -- set} end)
+    end
+
+    def pair_work(graph, minutes) do
+      partitions = partitions(graph)
+      total = Enum.count(partitions)
+      max = Enum.with_index(partitions)
+      |> Enum.map(fn {{set_a, set_b}, index} ->
+        IO.write(" Simulating #{index} out of #{total}\r")
+        simulate_paths(graph, minutes, minutes, set_a) + simulate_paths(graph, minutes, minutes, set_b)
+      end)
+      |> Enum.sort(:desc)
+      |> hd()
+
+      IO.write("                                   \r") # clear line
+      max
     end
 
     @input_test """
@@ -117,13 +140,15 @@ defmodule AdventOfCode.TwentyTwo.Day16 do
     """
 
     def part_one(input) do
-      graph = parse_input(input, @input_test)
-      |> find_max_pressure()
-      # |> IO.inspect()
-      # 0
+      parse_input(input, @input_test)
+      |> simulate_paths(30, 30)
+    end
+
+    def part_two(input) do
+      parse_input(input, @input_test)
+      |> pair_work(26)
     end
   end
 
   IO.puts("Part one: #{AdventOfCode.TwentyTwo.Day16.part_one("input.txt")}") # 2250
-  IO.puts("Part one: #{AdventOfCode.TwentyTwo.Day16.part_one("inputs.txt")}") # 2250
-#   IO.puts("Part two: #{AdventOfCode.TwentyTwo.Day16.part_two("input.txt")}") #
+  IO.puts("Part two: #{AdventOfCode.TwentyTwo.Day16.part_two("input.txt")}") # 3015
