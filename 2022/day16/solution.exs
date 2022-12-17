@@ -115,15 +115,10 @@ defmodule AdventOfCode.TwentyTwo.Day16 do
       partitions = partitions(graph)
       total = Enum.count(partitions)
       max = Enum.with_index(partitions)
-      |> Enum.map(fn {{set_a, set_b}, index} ->
-        IO.write(" Simulating #{index} out of #{total}\r")
+      |> Task.async_stream(fn {{set_a, set_b}, index} ->
         simulate_paths(graph, minutes, minutes, set_a) + simulate_paths(graph, minutes, minutes, set_b)
       end)
-      |> Enum.sort(:desc)
-      |> hd()
-
-      IO.write("                                   \r") # clear line
-      max
+      |> Enum.reduce(0, fn {:ok, pressure}, acc -> max(pressure, acc) end)
     end
 
     @input_test """
