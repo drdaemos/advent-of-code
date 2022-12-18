@@ -13,3 +13,5 @@ name="2022"
 path="2022/main.rs"
 
 [dependencies]
+strum = "0.24"
+strum_macros = "0.24"

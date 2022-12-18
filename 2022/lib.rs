@@ -1,4 +1,5 @@
 use std::fs;
+pub mod day18;
 pub mod utils {
     use super::*;
     pub fn get_file_contents(file_path: &str) -> String {

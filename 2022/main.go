@@ -64,6 +64,10 @@ func main() {
 			out, _, _ := utils.ExecuteShell("(cd ../ && mix run 2022/day16/solution.exs)")
 			fmt.Print(out)
 		},
+		"day18": func() {
+			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run -- day18)")
+			fmt.Print(out)
+		},
 	}
 	flag.Parse()
 
