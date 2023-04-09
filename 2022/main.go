@@ -60,6 +60,10 @@ func main() {
 		},
 		"day14":    day14.Main,
 		"day14vis": day14.Visualization,
+		"day15": func() {
+			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run -- day15)")
+			fmt.Print(out)
+		},
 		"day16": func() {
 			out, _, _ := utils.ExecuteShell("(cd ../ && mix run 2022/day16/solution.exs)")
 			fmt.Print(out)
