@@ -7,6 +7,7 @@ This repo contains my solutions to the https://adventofcode.com/ coding challeng
 - PHP v7.4
 - Clojure v1.11.1
 - Elixir v1.14
+- Rust v1.68
 
 ## Structure
 Solutions are grouped by the advent year and separated into `day*` folders which might contain several files:
