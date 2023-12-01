@@ -17,7 +17,8 @@ xtwone3four
 4nineeightseven2
 zoneight234
 7pqrstsixteen
-oneight`
+oneight
+3gbtdlblgp`
 
 func TestPartOne(t *testing.T) {
 	actual := PartOne(convertInput(Input))
@@ -28,8 +29,8 @@ func TestPartOne(t *testing.T) {
 
 func TestPartTwo(t *testing.T) {
 	actual := PartTwo(convertInput(Input2))
-	if actual != 299 {
-		t.Errorf("PartTwo = %d; want 299", actual)
+	if actual != 332 {
+		t.Errorf("PartTwo = %d; want 332", actual)
 	}
 }
 
