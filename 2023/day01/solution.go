@@ -77,7 +77,6 @@ func getRealLineCalibrationValue(str string) int {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(result)
 
 	return result
 }
@@ -91,19 +90,16 @@ func getFirstDigit(str string) string {
 
 func getLastDigit(str string) string {
 	re := regexp.MustCompile("(one|two|three|four|five|six|seven|eight|nine|[1-9])")
-	start := 0
-	lastMatch := ""
+	start := len(str) - 1
 
-	for start < len(str) {
+	for start > 0 {
 		match := re.FindString(str[start:])
-		if match == "" {
-			return convertToNumeric(lastMatch)
-		} else {
-			lastMatch = match
+		if match != "" {
+			return convertToNumeric(match)
 		}
-		start += 1
+		start -= 1
 	}
-	return convertToNumeric(lastMatch)
+	return ""
 }
 
 func convertToNumeric(input string) string {
