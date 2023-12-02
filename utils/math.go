@@ -14,6 +14,14 @@ func MinMax(array []int) (int, int) {
 	return min, max
 }
 
+func Max(a int, b int) int {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+
 func Sum(array []int) int {
 	result := 0
 	for _, v := range array {
