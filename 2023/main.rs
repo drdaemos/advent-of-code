@@ -1,8 +1,10 @@
 use std::env;
 
 pub mod day03;
+pub mod day04;
 
 use day03::day03;
+use day04::day04;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -12,6 +14,7 @@ fn main() {
     let input: &str = &args[1];
     match input {
         "day03" => day03(),
-        &_ => todo!()
+        "day04" => day04(),
+        &_ => todo!(),
     }
 }
