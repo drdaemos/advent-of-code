@@ -1,6 +1,7 @@
-use crate::utils::get_file_contents;
+use advent_of_code::utils::get_file_contents;
 use std::{collections::{HashSet}, thread, sync::{mpsc::{self, Sender}, Arc}};
 use regex::{Regex, Captures};
+
 
 #[derive(Hash, Eq, PartialEq, Debug, Clone, Copy)]
 struct Sensor {
@@ -15,7 +16,7 @@ struct Beacon {
     y: isize
 }
 
-pub fn main() {
+pub fn day15() {
     // println!("Part one: {}", part_one()); // 5461729
     println!("Part two: {}", part_two()); // 
 }

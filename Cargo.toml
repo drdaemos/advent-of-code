@@ -6,11 +6,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-path="2022/lib.rs"
+path="rustlib/lib.rs"
 
 [[bin]]
 name="2022"
 path="2022/main.rs"
+
+[[bin]]
+name="2023"
+path="2023/main.rs"
 
 [dependencies]
 strum = "0.24"

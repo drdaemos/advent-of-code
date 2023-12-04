@@ -61,7 +61,7 @@ func main() {
 		"day14":    day14.Main,
 		"day14vis": day14.Visualization,
 		"day15": func() {
-			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run -- day15)")
+			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2022 -- day15)")
 			fmt.Print(out)
 		},
 		"day16": func() {
@@ -69,7 +69,7 @@ func main() {
 			fmt.Print(out)
 		},
 		"day18": func() {
-			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run -- day18)")
+			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2022 -- day18)")
 			fmt.Print(out)
 		},
 	}

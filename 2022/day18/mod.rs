@@ -1,4 +1,4 @@
-use crate::utils::get_file_contents;
+use advent_of_code::utils::get_file_contents;
 use std::collections::{HashSet, VecDeque};
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
@@ -20,7 +20,7 @@ enum Direction {
     Back
 }
 
-pub fn main() {
+pub fn day18() {
     println!("Part one: {}", part_one()); // 3396
     println!("Part two: {}", part_two()); // 2044
 }

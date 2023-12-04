@@ -6,12 +6,17 @@ import (
 
 	"github.com/drdaemos/advent-of-code/2023/day01"
 	"github.com/drdaemos/advent-of-code/2023/day02"
+	"github.com/drdaemos/advent-of-code/utils"
 )
 
 func main() {
 	registry := map[string]func(){
 		"day01": day01.Main,
 		"day02": day02.Main,
+		"day03": func() {
+			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2023 -- day03)")
+			fmt.Print(out)
+		},
 	}
 	flag.Parse()
 
