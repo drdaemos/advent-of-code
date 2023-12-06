@@ -1,6 +1,4 @@
-use itertools::Itertools;
 use std::{
-    collections::{HashMap, HashSet},
     sync::{mpsc, Arc},
     thread::{self, JoinHandle},
 };
@@ -37,8 +35,6 @@ fn part_one(input: &str) -> u64 {
         .map(|seed| map_seed_to_location(seed, &almanac))
         .collect::<Vec<u64>>();
 
-    println!("{:?}", locations);
-
     return locations
         .into_iter()
         .min()
@@ -46,6 +42,8 @@ fn part_one(input: &str) -> u64 {
 }
 
 fn part_two(input: &str) -> u64 {
+    println!("Running threaded calc for part two, please wait...");
+
     let mut seed_ranges = parse_ranges(input);
     seed_ranges.sort_unstable_by(|a, b| a.start.cmp(&b.start));
     let almanac = parse_almanac(input);
@@ -61,7 +59,6 @@ fn part_two(input: &str) -> u64 {
         let tx = transmitter.clone();
         threads.push(thread::spawn(move || {
             let range = &data.0[part];
-            println!("{:?}", range);
             let maps = &data.1;
             let lowest = (range.start..(range.start + range.length))
                 .map(|seed| map_seed_to_location(seed, maps))
@@ -86,8 +83,6 @@ fn part_two(input: &str) -> u64 {
         thread.join().unwrap();
     }
 
-    println!("{:?}", locations);
-
     return locations
         .into_iter()
         .min()
@@ -108,15 +103,6 @@ fn map_seed_to_location(seed: u64, maps: &AlmanacMaps) -> u64 {
 }
 
 fn find_nearest_less_than(sorted_numbers: &Vec<MapRule>, target: u64) -> Option<MapRule> {
-    // Check if the smallest value is already greater or equal to the target
-    // In that case, no value in the vector is less than the target
-    if let Some(&first) = sorted_numbers.first() {
-        if first.range_start >= target {
-            return None;
-        }
-    }
-
-    // Perform binary search
     match sorted_numbers.binary_search_by(|probe| probe.range_start.cmp(&target)) {
         Err(0) => None,                                // All elements are greater
         Ok(index) => Some(sorted_numbers[index]),      // Element exactly equal
