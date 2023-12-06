@@ -25,6 +25,10 @@ func main() {
 			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2023 -- day05)")
 			fmt.Print(out)
 		},
+		"day06": func() {
+			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2023 -- day06)")
+			fmt.Print(out)
+		},
 	}
 	flag.Parse()
 
