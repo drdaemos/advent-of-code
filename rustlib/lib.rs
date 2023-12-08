@@ -14,4 +14,20 @@ pub mod utils {
             .map(ToOwned::to_owned)
             .collect()
     }
+
+    pub fn gcd(a: usize, b: usize) -> usize {
+        if b == 0 {
+            a
+        } else {
+            gcd(b, a % b)
+        }
+    }
+
+    pub fn lcm(a: usize, b: usize) -> usize {
+        (a * b) / gcd(a, b)
+    }
+
+    pub fn lcm_of_vec(numbers: &[usize]) -> usize {
+        numbers.iter().cloned().fold(1, |acc, num| lcm(acc, num))
+    }
 }
