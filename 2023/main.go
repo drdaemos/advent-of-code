@@ -14,20 +14,19 @@ func main() {
 		"day01": day01.Main,
 		"day02": day02.Main,
 		"day03": func() {
-			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2023 -- day03)")
-			fmt.Print(out)
+			runRustBin("day03")
 		},
 		"day04": func() {
-			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2023 -- day04)")
-			fmt.Print(out)
+			runRustBin("day04")
 		},
 		"day05": func() {
-			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2023 -- day05)")
-			fmt.Print(out)
+			runRustBin("day05")
 		},
 		"day06": func() {
-			out, _, _ := utils.ExecuteShell("(cd ../ && cargo run --bin 2023 -- day06)")
-			fmt.Print(out)
+			runRustBin("day06")
+		},
+		"day07": func() {
+			runRustBin("day07")
 		},
 	}
 	flag.Parse()
@@ -39,4 +38,9 @@ func main() {
 	} else {
 		fmt.Println("Solution not found")
 	}
+}
+
+func runRustBin(day string) {
+	out, _, _ := utils.ExecuteShell(fmt.Sprintf("(cd ../ && cargo run --bin 2023 -- %s)", day))
+	fmt.Print(out)
 }
