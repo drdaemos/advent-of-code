@@ -6,6 +6,8 @@ pub mod day05;
 pub mod day06;
 pub mod day07;
 pub mod day08;
+pub mod day09;
+pub mod day10;
 
 use day03::day03;
 use day04::day04;
@@ -13,6 +15,8 @@ use day05::day05;
 use day06::day06;
 use day07::day07;
 use day08::day08;
+use day09::day09;
+use day10::day10;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -27,6 +31,8 @@ fn main() {
         "day06" => day06(),
         "day07" => day07(),
         "day08" => day08(),
+        "day09" => day09(),
+        "day10" => day10(),
         &_ => todo!(),
     }
 }

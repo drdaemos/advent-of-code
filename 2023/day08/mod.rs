@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use advent_of_code::utils::{get_file_contents, lcm_of_vec};
+use advent_of_code::{math::lcm_of_vec, utils::get_file_contents};
 use itertools::Itertools;
 use regex::Regex;
 
