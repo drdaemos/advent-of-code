@@ -1,9 +1,6 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use advent_of_code::{
-    terminal::{clear_screen, render_map, sub_pipes},
-    utils::get_file_contents,
-};
+use advent_of_code::utils::get_file_contents;
 use itertools::Itertools;
 
 type Pos = (usize, usize);
@@ -25,7 +22,7 @@ pub fn day10() {
 }
 
 fn part_one(input: &str) -> usize {
-    let (start, graph, _, _) = parse_graph(input);
+    let (start, graph, _) = parse_graph(input);
     let (walk, _) = longest_path_bfs(&graph, start);
     let half_walk = (walk + 1) / 2;
 
@@ -33,13 +30,20 @@ fn part_one(input: &str) -> usize {
 }
 
 fn part_two(input: &str) -> usize {
-    let (start, graph, height, width) = parse_graph(input);
+    // Get graph
+    let (start, graph, width) = parse_graph(input);
 
-    let (_, loop_set) = longest_path_bfs(&graph, start);
+    // Get loop polygon
+    let (_, polygon) = longest_path_bfs(&graph, start);
 
-    return (0..width)
-        .map(|y| find_points_inside(&loop_set, &parse_map(input), width, y))
-        .sum();
+    // Get parsed version of map because graph omits some unlinked nodes
+    let mut map = parse_map(input);
+
+    // Replace 'S' with appropriate pipe type
+    map.insert(start, get_start_sub(graph.get(&start).unwrap().pos, &graph));
+
+    // Run search for inner points
+    return find_inner_points(width, &polygon, &map);
 }
 
 fn parse_map(input: &str) -> HashMap<Pos, char> {
@@ -57,9 +61,8 @@ fn parse_map(input: &str) -> HashMap<Pos, char> {
     );
 }
 
-fn parse_graph(input: &str) -> (Pos, Graph, usize, usize) {
+fn parse_graph(input: &str) -> (Pos, Graph, usize) {
     let lines = input.trim().split("\n").enumerate().collect_vec();
-    let height = lines.len();
     let width = lines[0].1.len();
 
     let nodes = lines
@@ -76,7 +79,7 @@ fn parse_graph(input: &str) -> (Pos, Graph, usize, usize) {
     let start = nodes.iter().find(|node| node.start).unwrap().pos;
     let graph = HashMap::from_iter(nodes.into_iter().map(|node| (node.pos, node)));
 
-    return (start, graph, height, width);
+    return (start, graph, width);
 }
 
 fn parse_node(pos: Pos, char: char, lines: &Vec<(usize, &str)>) -> Option<Node> {
@@ -159,98 +162,116 @@ fn longest_path_bfs(graph: &Graph, start: Pos) -> (usize, HashSet<Pos>) {
     (max_walk, max_visited)
 }
 
-fn find_inner_points(
-    width: usize,
-    height: usize,
-    loop_set: &HashSet<Pos>,
-    map: &HashMap<Pos, char>,
-) -> usize {
-    let mut inner: HashSet<Pos> = HashSet::new();
+fn find_inner_points(width: usize, polygon: &HashSet<Pos>, map: &HashMap<Pos, char>) -> usize {
+    let outer_points = map
+        .into_iter()
+        .filter(|(pos, _)| !polygon.contains(pos))
+        .map(|(pos, _)| pos)
+        .collect_vec();
 
-    for y in 0..height {
-        let new_points = raycast_line(y, width, loop_set, map);
-        println!("line {} - {:?}", y, new_points);
-        inner.extend(new_points);
-    }
+    let inner = outer_points
+        .into_iter()
+        .filter(|point| raycast_line(point, width, &polygon, map))
+        .collect_vec();
 
     return inner.len();
 }
 
-fn raycast_line<'a>(
-    y: usize,
+fn raycast_line(
+    point: &Pos,
     max_x: usize,
     polygon_set: &HashSet<Pos>,
     map: &HashMap<Pos, char>,
-) -> HashSet<Pos> {
-    let mut left = 0;
-    let mut right = 0;
-    let mut inner_points = HashSet::new();
+) -> bool {
+    let mut crossings = 0;
+    let mut prev: Option<char> = None;
+    let y = point.1;
+    if point.0 + 1 == max_x {
+        return false;
+    }
 
-    for x in 0..max_x {
+    for x in (point.0 + 1)..max_x {
         let current = &(x, y);
         let char = map.get(current);
         match polygon_set.contains(current) {
             true => match char {
-                Some('-') => {
-                    left += 1;
-                    right += 1;
+                Some('|') => crossings += 1,
+                Some('L') => prev = Some('L'),
+                Some('F') => prev = Some('F'),
+                Some('J') if prev.is_some_and(|ch| ch == 'F') => {
+                    crossings += 1;
+                    prev = None;
                 }
-                Some('L') => right += 1,
-                Some('F') => right += 1,
-                Some('J') => left += 1,
-                Some('7') => left += 1,
-                _ => (),
+                Some('7') if prev.is_some_and(|ch| ch == 'L') => {
+                    crossings += 1;
+                    prev = None;
+                }
+                Some('J') | Some('7') => prev = None,
+                Some('-') => {}
+                _ => todo!(),
             },
-            false => {
-                if left.min(right) % 2 == 1 {
-                    inner_points.insert(current.clone());
-                }
-            }
+            false => {}
         }
     }
 
-    return inner_points;
+    return crossings % 2 != 0;
 }
 
-fn find_points_inside(
-    polygon: &HashSet<Pos>,
-    map: &HashMap<Pos, char>,
-    max_x: usize,
-    y: usize,
-) -> usize {
-    // Note that it's possible for the 'S' to be a corner in some inputs but it wasn't in mine.
-    // If it is, it needs to be added to these sets.
-    // Ideally I should have replaced it when parsing the input.
-    let walls: HashSet<char> = ['L', 'J', '7', 'F', '|'].iter().cloned().collect();
-    let corners: HashSet<char> = ['L', 'J', '7', 'F'].iter().cloned().collect();
+fn get_char((x, y): Pos, graph: &Graph) -> Option<char> {
+    graph.get(&(x, y)).and_then(|f| Some(f.char))
+}
 
-    let mut count = 0;
-    let mut inside = false;
-    let mut prev_corner: Option<char> = None;
-    for x in 0..max_x {
-        if polygon.contains(&(x, y)) {
-            let current = &(x, y);
-            let cell = map.get(current).unwrap();
-            if walls.contains(&cell) {
-                if corners.contains(&cell) {
-                    if let Some(prev) = prev_corner {
-                        // These corners extend the vertical edge we've already accounted for.
-                        if (prev == 'L' && *cell == '7') || (prev == 'F' && *cell == 'J') {
-                            prev_corner = None;
-                            continue;
-                        }
-                    }
-                    prev_corner = Some(*cell);
-                }
-                inside = !inside;
-            }
-            continue;
-        }
-        if inside {
-            count += 1;
-        }
+fn from_top(ch: Option<char>) -> bool {
+    match ch {
+        Some('|') | Some('F') | Some('7') => true,
+        _ => false,
     }
-    count
+}
+
+fn from_left(ch: Option<char>) -> bool {
+    match ch {
+        Some('-') | Some('F') | Some('L') => true,
+        _ => false,
+    }
+}
+
+fn from_bottom(ch: Option<char>) -> bool {
+    match ch {
+        Some('|') | Some('J') | Some('L') => true,
+        _ => false,
+    }
+}
+
+fn from_right(ch: Option<char>) -> bool {
+    match ch {
+        Some('-') | Some('J') | Some('7') => true,
+        _ => false,
+    }
+}
+
+fn get_start_sub((x, y): Pos, graph: &Graph) -> char {
+    let top = if y > 0 {
+        get_char((x, y - 1), graph)
+    } else {
+        None
+    };
+    let left = if x > 0 {
+        get_char((x - 1, y), graph)
+    } else {
+        None
+    };
+    let bottom = get_char((x, y + 1), graph);
+    let right = get_char((x + 1, y), graph);
+
+    return match (top, left, bottom, right) {
+        (top, left, _, _) if from_top(top) && from_left(left) => 'J',
+        (top, _, _, right) if from_top(top) && from_right(right) => 'L',
+        (_, _, bottom, right) if from_bottom(bottom) && from_right(right) => 'F',
+        (_, left, bottom, _) if from_bottom(bottom) && from_left(left) => '7',
+        (top, _, bottom, _) if from_top(top) && from_bottom(bottom) => '|',
+        (_, left, _, right) if from_left(left) && from_right(right) => '-',
+        _ => todo!(),
+    };
 }
 
 #[cfg(test)]
