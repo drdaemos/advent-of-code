@@ -1,6 +1,7 @@
 use std::fs;
 
 pub mod math;
+pub mod terminal;
 
 pub mod utils {
     use super::*;
