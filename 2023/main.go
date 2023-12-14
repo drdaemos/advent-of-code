@@ -37,6 +37,9 @@ func main() {
 		"day10": func() {
 			runRustBin("day10")
 		},
+		"day11": func() {
+			runRustBin("day11")
+		},
 	}
 	flag.Parse()
 
