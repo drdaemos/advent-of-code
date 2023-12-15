@@ -1,6 +1,5 @@
 use std::collections::HashMap;
-use std::hash::Hash;
-use std::{collections::HashSet, usize};
+use std::usize;
 
 use advent_of_code::utils::get_file_contents;
 use indexmap::{indexmap, IndexMap};

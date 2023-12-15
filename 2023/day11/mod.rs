@@ -145,7 +145,7 @@ fn manhattan_distance((x1, y1): Pos, (x2, y2): Pos) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use crate::day11::{part_one, part_two};
+    use crate::day11::part_one;
 
     const INPUT: &str = "
 ...#......
