@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
 use advent_of_code::utils::get_file_contents;
 use itertools::Itertools;
+use memoize::memoize;
 
 pub fn day12() {
     let input = get_file_contents("2023/day12/input.txt");
@@ -44,57 +43,55 @@ fn unfold_springs(line: (&str, Vec<usize>), factor: usize) -> (String, Vec<usize
 }
 
 fn memoized_calc(springs: &str, groups: &[usize]) -> usize {
-    return calc_arrangements(springs, groups, &mut HashMap::new());
+    memoized_flush_calc_arrangements();
+    return calc_arrangements(springs.to_string(), groups.to_vec());
 }
 
-fn calc_arrangements(springs: &str, groups: &[usize], map: &mut HashMap<String, usize>) -> usize {
-    let key =
-        springs.to_string() + " [" + &groups.into_iter().map(|x| x.to_string()).join(", ") + "]";
-
-    if !map.contains_key(&key) {
-        // If all groups have been matched
-        if groups.len() == 0 {
-            // and there are no left-over springs, the branch is valid
-            return if springs.contains('#') { 0 } else { 1 };
-        }
-
-        // trim leading dots
-        if springs.starts_with(".") {
-            return calc_arrangements(&springs[1..], groups, map);
-        }
-
-        // get next group size
-        let (first, rest) = groups.split_first().unwrap();
-
-        // if group is longer than available record, branch is invalid
-        if first > &springs.len() {
-            return 0;
-        }
-
-        // slide window by 1 and check other possible arrangements
-        let siblings = match springs.starts_with('#') {
-            true => 0,
-            false => calc_arrangements(&springs[1..], groups, map),
-        };
-
-        // if next `first` chars match only spring chars ('?', '#')
-        let group_match = springs
-            .chars()
-            .take(*first)
-            .into_iter()
-            .all(|ch| ['?', '#'].contains(&ch));
-
-        // check other groups in this arrangement
-        let after_group = *first + 1;
-        let descendants = match group_match && springs.chars().nth(*first) != Some('#') {
-            true => calc_arrangements(&springs.get(after_group..).unwrap_or_default(), rest, map),
-            false => 0,
-        };
-
-        map.insert(key.clone(), siblings + descendants);
+#[memoize]
+fn calc_arrangements(springs: String, groups: Vec<usize>) -> usize {
+    // If all groups have been matched
+    if groups.len() == 0 {
+        // and there are no left-over springs, the branch is valid
+        return if springs.contains('#') { 0 } else { 1 };
     }
 
-    return *map.entry(key).or_default();
+    // trim leading dots
+    if springs.starts_with(".") {
+        return calc_arrangements(springs[1..].to_string(), groups);
+    }
+
+    // get next group size
+    let (first, rest) = groups.split_first().unwrap();
+
+    // if group is longer than available record, branch is invalid
+    if first > &springs.len() {
+        return 0;
+    }
+
+    // slide window by 1 and check other possible arrangements
+    let siblings = match springs.starts_with('#') {
+        true => 0,
+        false => calc_arrangements(springs[1..].to_string(), groups.clone()),
+    };
+
+    // if next `first` chars match only spring chars ('?', '#')
+    let group_match = springs
+        .chars()
+        .take(*first)
+        .into_iter()
+        .all(|ch| ['?', '#'].contains(&ch));
+
+    // check other groups in this arrangement
+    let after_group = *first + 1;
+    let descendants = match group_match && springs.chars().nth(*first) != Some('#') {
+        true => calc_arrangements(
+            springs.get(after_group..).unwrap_or_default().to_string(),
+            rest.to_vec(),
+        ),
+        false => 0,
+    };
+
+    return siblings + descendants;
 }
 
 #[cfg(test)]
