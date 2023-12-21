@@ -43,6 +43,9 @@ func main() {
 		"day12": func() {
 			runRustBin("day12")
 		},
+		"day13": func() {
+			runRustBin("day13")
+		},
 		"day15": func() {
 			runRustBin("day15")
 		},
