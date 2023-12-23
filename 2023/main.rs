@@ -11,6 +11,7 @@ pub mod day10;
 pub mod day11;
 pub mod day12;
 pub mod day13;
+pub mod day14;
 pub mod day15;
 
 use day03::day03;
@@ -24,6 +25,7 @@ use day10::day10;
 use day11::day11;
 use day12::day12;
 use day13::day13;
+use day14::day14;
 use day15::day15;
 
 fn main() {
@@ -44,6 +46,7 @@ fn main() {
         "day11" => day11(),
         "day12" => day12(),
         "day13" => day13(),
+        "day14" => day14(),
         "day15" => day15(),
         &_ => todo!(),
     }
