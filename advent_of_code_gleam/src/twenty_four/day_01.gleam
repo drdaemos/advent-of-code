@@ -40,9 +40,11 @@ pub fn part_two(input: String) -> Int {
 
 fn parse_input(input: String) -> List(List(Int)) {
   input
+  |> string.trim
   |> string.split("\n")
   |> list.map(fn(line) {
-    string.split(line, "   ")
+    string.trim(line)
+    |> string.split("   ")
     |> list.map(fn(value) { int.parse(value) |> result.unwrap(0) })
   })
   |> list.transpose
