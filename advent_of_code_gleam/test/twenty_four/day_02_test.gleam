@@ -19,8 +19,6 @@ pub fn day_02_test() {
   day_02.part_one(input)
   |> should.equal(2)
 
-  io.debug("PART TWOOOOOOOOOOOOOOOOOOOOo")
-
   day_02.part_two(input)
   |> should.equal(4)
 }
