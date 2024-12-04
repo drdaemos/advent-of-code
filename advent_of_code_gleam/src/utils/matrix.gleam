@@ -1,56 +1,64 @@
 import gleam/dict.{type Dict}
 import gleam/list
+import gleam/option
 import gleam/result
 
-pub fn rotate45(matrix: List(List(value))) -> List(List(value)) {
-  let num_rows = list.length(matrix)
-  let num_cols = case list.first(matrix) {
+pub fn rotate90(matrix: List(List(value))) -> List(List(value)) {
+  let rows = list.length(matrix)
+  let cols = case list.first(matrix) {
     Ok(row) -> list.length(row)
     Error(Nil) -> 0
   }
-  let num_diagonals = num_rows + num_cols - 1
 
-  let diagonals = collect_diagonals(matrix, dict.new())
-  let keys = list.range(0, num_diagonals - 1)
-  keys
-  |> list.map(fn(key) { dict.get(diagonals, key) |> result.unwrap([]) })
+  list.range(0, cols - 1)
+  |> list.map(fn(col) {
+    list.range(rows - 1, 0)
+    |> list.filter_map(fn(row) {
+      list_at(matrix, row)
+      |> result.lazy_unwrap(fn() { panic })
+      |> list_at(col)
+    })
+  })
 }
 
-fn collect_diagonals(
-  matrix: List(List(value)),
-  diagonals: Dict(Int, List(value)),
-) -> Dict(Int, List(value)) {
-  collect_rows(matrix, 0, diagonals)
+pub fn rotate45(matrix: List(List(value))) -> List(List(value)) {
+  let rows = list.length(matrix)
+  let cols = case list.first(matrix) {
+    Ok(row) -> list.length(row)
+    Error(Nil) -> 0
+  }
+
+  list.range(0, rows + cols - 2)
+  |> list.map(fn(diag) {
+    list.range(0, diag + 1)
+    |> list.filter_map(fn(row) {
+      let col = diag - row
+      case row < rows && col < cols && col >= 0 {
+        True ->
+          list_at(matrix, row)
+          |> result.lazy_unwrap(fn() { panic })
+          |> list_at(col)
+        False -> Error(Nil)
+      }
+    })
+  })
 }
 
-fn collect_rows(
-  matrix: List(List(value)),
-  i: Int,
-  diagonals: Dict(Int, List(value)),
-) -> Dict(Int, List(value)) {
-  case matrix {
-    [] -> diagonals
-    [row, ..rest] -> {
-      let updated_diagonals = collect_row(row, i, 0, diagonals)
-      collect_rows(rest, i + 1, updated_diagonals)
-    }
+pub fn at(matrix: List(List(value)), row: Int, col: Int) -> Result(value, Nil) {
+  let line = list_at(matrix, row)
+  case line {
+    Ok(line) -> list_at(line, col)
+    Error(Nil) -> Error(Nil)
   }
 }
 
-fn collect_row(
-  row: List(value),
-  i: Int,
-  j: Int,
-  diagonals: Dict(Int, List(value)),
-) -> Dict(Int, List(value)) {
-  case row {
-    [] -> diagonals
-    [element, ..rest] -> {
-      let idx = i + j
-      let current_list = dict.get(diagonals, idx) |> result.unwrap([])
-      let new_list = list.append(current_list, [element])
-      let new_diagonals = dict.insert(diagonals, idx, new_list)
-      collect_row(rest, i, j + 1, new_diagonals)
+// Returns nth (0-indexed) element if present, or Nil otherwise
+fn list_at(list: List(value), index: Int) -> Result(value, Nil) {
+  case index < list.length(list) {
+    True -> {
+      list.take(list, index + 1)
+      |> list.last
     }
+    False -> Error(Nil)
   }
 }

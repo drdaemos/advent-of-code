@@ -20,9 +20,10 @@ MXMXAXMASX"
 
 pub fn day_04_part_one_test() {
   day_04.part_one(input)
-  |> should.equal(161)
+  |> should.equal(18)
 }
-// pub fn day_04_part_two_test() {
-//   day_04.part_two(input_2)
-//   |> should.equal(48)
-// }
+
+pub fn day_04_part_two_test() {
+  day_04.part_two(input)
+  |> should.equal(9)
+}

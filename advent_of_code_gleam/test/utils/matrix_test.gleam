@@ -13,3 +13,14 @@ pub fn rotate45_test() {
   matrix.rotate45(matrix)
   |> should.equal(expected)
 }
+
+pub fn rotate90_test() {
+  let expected = [[7, 4, 1], [8, 5, 2], [9, 6, 3]]
+  matrix.rotate90(matrix)
+  |> should.equal(expected)
+
+  let expected_2 = [[9, 8, 7], [6, 5, 4], [3, 2, 1]]
+  matrix.rotate90(matrix)
+  |> matrix.rotate90
+  |> should.equal(expected_2)
+}
