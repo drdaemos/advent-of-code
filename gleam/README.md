@@ -1,24 +1,8 @@
-# advent_of_code_gleam
+# Advent of Code with Gleam
 
-[![Package Version](https://img.shields.io/hexpm/v/advent_of_code_gleam)](https://hex.pm/packages/advent_of_code_gleam)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/advent_of_code_gleam/)
+Inputs are expected to be in `./inputs/day_<NN>.txt` files. 
+A solution for the specific day can be run with the following command:
 
-```sh
-gleam add advent_of_code_gleam@1
 ```
-```gleam
-import advent_of_code_gleam
-
-pub fn main() {
-  // TODO: An example of the project in use
-}
-```
-
-Further documentation can be found at <https://hexdocs.pm/advent_of_code_gleam>.
-
-## Development
-
-```sh
-gleam run   # Run the project
-gleam test  # Run the tests
+gleam run -m twenty_four/day_<NN>
 ```
