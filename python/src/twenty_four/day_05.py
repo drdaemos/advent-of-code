@@ -22,7 +22,6 @@ def part_two(input: str) -> int:
     for update in parse_updates(input):
         if not is_valid_update(update, rules):
             fixed = fix_invalid_update(update, rules)
-            print(fixed)
             middles.append(fixed[math.floor((len(fixed) - 1)/2)])
 
     return sum(map(int, middles))
