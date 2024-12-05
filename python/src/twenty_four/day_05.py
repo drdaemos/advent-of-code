@@ -12,7 +12,7 @@ def part_one(input: str) -> int:
     middles = []
     for update in parse_updates(input):
         if is_valid_update(update, rules):
-            middles.append(update[math.floor((len(update) - 1)/2)])
+            middles.append(update[(len(update) - 1)//2])
 
     return sum(map(int, middles))
 
@@ -22,7 +22,7 @@ def part_two(input: str) -> int:
     for update in parse_updates(input):
         if not is_valid_update(update, rules):
             fixed = fix_invalid_update(update, rules)
-            middles.append(fixed[math.floor((len(fixed) - 1)/2)])
+            middles.append(fixed[(len(fixed) - 1)//2])
 
     return sum(map(int, middles))
     
