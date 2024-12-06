@@ -1,4 +1,4 @@
-from functools import cmp_to_key
+from collections import defaultdict
 from typing import Dict, List
 import math
 
@@ -28,14 +28,11 @@ def part_two(input: str) -> int:
     
 def parse_rules(input: str) -> Dict[str, List[str]]:
     lines = input.strip().split('\n\n')[0].split('\n')
-    hashmap: dict[str, List[str]] = {}
+    hashmap: dict[str, List[str]] = defaultdict(list)
     
     for line in lines:
         key, value = line.split('|')
-        if hashmap.get(key):
-            hashmap[key].append(value)
-        else:
-            hashmap[key] = [value]
+        hashmap[key].append(value)
     
     return hashmap
 
@@ -53,7 +50,7 @@ def is_valid_update(update: List[str], rules: Dict[str, List[str]]) -> bool:
 
         rest = reversed[i+1:]
         # If next pages have any incorrect pages based on ruleset - update is invalid
-        if list(set(invalid) & set(rest)) != []:
+        if set(invalid) & set(rest): 
             return False
 
     return True
@@ -73,7 +70,7 @@ def fix_invalid_update(update: List[str], rules: Dict[str, List[str]]) -> List[s
                 continue
 
             rest = reversed[i+1:]
-            if list(set(invalid) & set(rest)) != []:
+            if set(invalid) & set(rest):
                 reversed[i], reversed[i + 1] = reversed[i + 1], reversed[i]
                 needs_sorting = True
 
