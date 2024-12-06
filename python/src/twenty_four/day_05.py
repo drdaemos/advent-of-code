@@ -4,6 +4,7 @@ import math
 
 def main():
     input = open("./inputs/day_05.txt").read()
+    print("Advent of Code 2024 - day 5")
     print("Part one: %d" % part_one(input))
     print("Part two: %d" % part_two(input))
 

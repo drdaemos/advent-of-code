@@ -3,5 +3,7 @@
     "editor.formatOnSave": true,
     "python.analysis.extraPaths": [
         "./python/src"
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true
 }

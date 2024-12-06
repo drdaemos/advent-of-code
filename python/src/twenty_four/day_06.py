@@ -1,4 +1,5 @@
 from collections import defaultdict
+from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Dict, List, Set
@@ -26,6 +27,7 @@ class Map:
 
 def main():
     input = open("./inputs/day_06.txt").read()
+    print("Advent of Code 2024 - day 6")
     print("Part one: %d" % part_one(input))
     print("Part two: %d" % part_two(input))
 
@@ -34,10 +36,19 @@ def main():
 # Returns the number of visited positions before leaving the map
 def part_one(input: str) -> int:
     map = parse_map(input)
-    return simulate_path(map)
+    visited = simulate_path(map)
+    return len(visited)
 
 def part_two(input: str) -> int:
-    return 0
+    working_blocks = 0
+    map = parse_map(input)
+    visited = simulate_path(map)
+    for point in visited:
+        map_with_block = get_map_with_new_wall(map, point)
+        if detect_loop(map_with_block, False):
+            working_blocks += 1
+
+    return working_blocks
 
 # Returns dicts of walls in map, starting position and direction
 def parse_map(input: str) -> Map:
@@ -62,8 +73,21 @@ def parse_map(input: str) -> Map:
 
     return Map(walls_by_rows=walls_by_rows, walls_by_cols=walls_by_cols, start=start, direction=Direction.NORTH, size=len(lines))
 
-# Simulates a path based on rules and returns the number of visited positions
-def simulate_path(map: Map) -> int:
+def get_map_with_new_wall(map: Map, wall: Point) -> Map:
+    updated_map = deepcopy(map)
+    updated_map.walls_by_cols[wall[1]].append(wall[0])
+    updated_map.walls_by_rows[wall[0]].append(wall[1])
+
+    for key in updated_map.walls_by_rows:
+        updated_map.walls_by_rows[key].sort()
+
+    for key in updated_map.walls_by_cols:
+        updated_map.walls_by_cols[key].sort()
+
+    return updated_map
+
+# Simulates a path based on rules and returns the set of visited positions
+def simulate_path(map: Map) -> Set[Point]:
     visited: Set[Point] = set([map.start])
     current = map.start
     direction = map.direction
@@ -71,7 +95,6 @@ def simulate_path(map: Map) -> int:
 
     while within_bounds:
         wall = get_wall_in_direction(map, current, direction)
-        print(wall)
         if wall is not None:
             visited.update(get_visited_set(current, direction, wall))
             current = update_current(direction, wall)
@@ -80,11 +103,30 @@ def simulate_path(map: Map) -> int:
             visited.update(get_visited_set(current, direction, get_bounding_wall(current, direction, map.size)))
             within_bounds = False
 
-        print(current)
+    return visited
 
-    print_visited(visited)
+# Simulates a path based on rules and tries to detect a loop
+def detect_loop(map: Map, debug: bool) -> bool:
+    visited_walls: Set[tuple[Point, Direction]] = set([])
+    current = map.start
+    direction = map.direction
+    within_bounds = True
+    if debug: print(map)
 
-    return len(visited)
+    while within_bounds:
+        wall = get_wall_in_direction(map, current, direction)
+        if debug: print(wall, direction)
+        if wall is not None:
+            if (wall, direction) in visited_walls:
+                return True
+            
+            visited_walls.add((wall, direction))
+            current = update_current(direction, wall)
+            direction = update_direction(direction)
+        else:
+            within_bounds = False
+
+    return False
 
 def get_bounding_wall(current: Point, direction: Direction, size: int) -> Point:
     match direction:
