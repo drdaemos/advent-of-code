@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Dict, List, Set
 
+from tqdm import tqdm
+
 # coordinate within map as (row, col)
 type Point = tuple[int, int]
 
@@ -28,10 +30,10 @@ def main():
     print("Advent of Code 2024 - day 6")
     try:
         input = open("./inputs/day_06.txt").read()
-        print("Part one: %d" % part_one(input))
-        print("Part two: %d" % part_two(input))
+        print(" Part one: %d" % part_one(input))
+        print(" Part two: %d" % part_two(input))
     except:
-        print("Input not found, expected to have `./inputs/day_06.txt`")
+        print(" Input not found, expected to have `./inputs/day_06.txt`")
 
 # Analyzes the 2d matrix (map)
 # Traces the programmed path across the map
@@ -45,7 +47,7 @@ def part_two(input: str) -> int:
     working_blocks = 0
     map = parse_map(input)
     visited = simulate_path(map)
-    for point in visited:
+    for point in tqdm(visited, leave=False):
         map_with_block = get_map_with_new_wall(map, point)
         if detect_loop(map_with_block, False):
             working_blocks += 1

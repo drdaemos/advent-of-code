@@ -5,10 +5,10 @@ def main():
     print("Advent of Code 2024 - day 5")
     try:
         input = open("./inputs/day_05.txt").read()
-        print("Part one: %d" % part_one(input))
-        print("Part two: %d" % part_two(input))
+        print(" Part one: %d" % part_one(input))
+        print(" Part two: %d" % part_two(input))
     except:
-        print("Input not found, expected to have `./inputs/day_05.txt`")
+        print(" Input not found, expected to have `./inputs/day_05.txt`")
 
 def part_one(input: str) -> int:
     rules = parse_rules(input)

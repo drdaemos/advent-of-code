@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from itertools import product
 from typing import List
+from tqdm import tqdm
 
 @dataclass
 class Equation:
@@ -11,17 +12,17 @@ def main():
     print("Advent of Code 2024 - day 7")
     try:
         input = open("./inputs/day_07.txt").read()
-        print("Part one: %d" % part_one(input))
-        print("Part two: %d" % part_two(input))
+        print(" Part one: %d" % part_one(input))
+        print(" Part two: %d" % part_two(input))
     except:
-        print("Input malformed / not found, expected to have `./inputs/day_07.txt`")
+        print(" Input malformed / not found, expected to have `./inputs/day_07.txt`")
     
 def part_one(input: str) -> int:
-    valid = filter(lambda eq: is_valid_eq(eq, '+*'), parse_input(input))
+    valid = filter(lambda eq: is_valid_eq(eq, '+*'), tqdm(parse_input(input), leave=False))
     return sum(map(lambda eq: eq.left, list(valid)))
 
 def part_two(input: str) -> int:
-    valid = filter(lambda eq: is_valid_eq(eq, '+*|'), parse_input(input))
+    valid = filter(lambda eq: is_valid_eq(eq, '+*|'), tqdm(parse_input(input), leave=False))
     return sum(map(lambda eq: eq.left, list(valid)))
 
 def is_valid_eq(eq: Equation, ops: str) -> bool:
