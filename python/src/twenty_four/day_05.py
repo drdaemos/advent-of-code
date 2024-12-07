@@ -1,12 +1,14 @@
 from collections import defaultdict
 from typing import Dict, List
-import math
 
 def main():
-    input = open("./inputs/day_05.txt").read()
     print("Advent of Code 2024 - day 5")
-    print("Part one: %d" % part_one(input))
-    print("Part two: %d" % part_two(input))
+    try:
+        input = open("./inputs/day_05.txt").read()
+        print("Part one: %d" % part_one(input))
+        print("Part two: %d" % part_two(input))
+    except:
+        print("Input not found, expected to have `./inputs/day_05.txt`")
 
 def part_one(input: str) -> int:
     rules = parse_rules(input)

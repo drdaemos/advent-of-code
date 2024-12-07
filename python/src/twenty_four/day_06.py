@@ -3,7 +3,6 @@ from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Dict, List, Set
-import math
 
 # coordinate within map as (row, col)
 type Point = tuple[int, int]
@@ -26,10 +25,13 @@ class Map:
     size: int
 
 def main():
-    input = open("./inputs/day_06.txt").read()
     print("Advent of Code 2024 - day 6")
-    print("Part one: %d" % part_one(input))
-    print("Part two: %d" % part_two(input))
+    try:
+        input = open("./inputs/day_06.txt").read()
+        print("Part one: %d" % part_one(input))
+        print("Part two: %d" % part_two(input))
+    except:
+        print("Input not found, expected to have `./inputs/day_06.txt`")
 
 # Analyzes the 2d matrix (map)
 # Traces the programmed path across the map
