@@ -29,17 +29,31 @@ def is_valid_eq(eq: Equation, ops: str) -> bool:
     for operators in combs:
         sum = eq.right[0]
         for i in range(0, len(eq.right) - 1):
+            val = eq.right[i+1]
             match operators[i]:
                 case '*':
-                    sum *= eq.right[i+1]
+                    sum *= val
                 case '+':
-                    sum += eq.right[i+1]
+                    sum += val
                 case '|':
-                    sum = int(str(sum) + str(eq.right[i+1]))
+                    sum = concat(sum, val)
         if sum == eq.left:
             return True
 
     return False
+
+def concat(a: int, b: int) -> int:
+    match b:
+        case b if b < 10:
+            return a * 10 + b
+        case b if b < 100:
+            return a * 100 + b
+        case b if b < 1000:
+            return a * 1000 + b
+        case b if b < 10000:
+            return a * 10000 + b
+        case _:
+            raise Exception('Unknown case')
 
 def parse_input(input: str) -> List[Equation]:
     result = []
