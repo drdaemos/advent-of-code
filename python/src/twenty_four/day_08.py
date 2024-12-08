@@ -17,26 +17,48 @@ def main():
         print(" Input malformed / not found, expected to have `./inputs/day_08.txt`")
     
 def part_one(input: str) -> int:
-    map = parse_input(input)
+    map, size = parse_input(input)
+    points = find_antinodes(map, size, False)
+
+    return len(points)
+
+def part_two(input: str) -> int:
+    map, size = parse_input(input)
+    points = find_antinodes(map, size, True)
+
+    return len(points)
+
+def find_antinodes(map: Map, size: int, part_two_mode: bool) -> Set[Point]:
+    visited: Set[Point] = set([])
 
     for key in map:
         antinodes: Set[Point] = set([])
         for antenna in map[key]:
-            print("antenna", antenna)
             for neighbour in map[key]:
-                print("vec", get_vec_from_points(neighbour, antenna))
-                # ??????
-                antinode = get_vec_from_points(neighbour, get_vec_from_points(antenna, neighbour))
-                if antinode not in map[key] and antinode[0] > -1 and antinode[1] > -1:
-                    antinodes.add(antinode)
-        
-        print(key, antinodes)
-        print_visited(antinodes)
+                vec_diff = get_vec_from_points(antenna, neighbour)
 
-    return 0
+                if vec_diff == (0,0):
+                    continue
 
-def part_two(input: str) -> int:
-    return 0
+                if part_two_mode is False:
+                    antinode = get_vec_from_points(neighbour, vec_diff)
+                    if antinode not in map[key] and antinode[0] > -1 and antinode[1] > -1 and antinode[0] < size and antinode[1] < size:
+                        antinodes.add(antinode)
+                else:
+                    within_bounds = True
+                    current = neighbour
+                    antinodes.add(neighbour)
+                    while within_bounds:
+                        antinode = get_vec_from_points(current, vec_diff)
+                        if antinode[0] > -1 and antinode[1] > -1 and antinode[0] < size and antinode[1] < size:
+                            current = antinode
+                            antinodes.add(antinode)
+                        else:
+                            within_bounds = False
+
+        visited.update(antinodes)
+
+    return visited
 
 def print_visited(visited: Set[Point]):
     for row in range(0, 12):
@@ -47,7 +69,7 @@ def print_visited(visited: Set[Point]):
                 print('.', end="")
         print("")
 
-def parse_input(input: str) -> Map:
+def parse_input(input: str) -> tuple[Map, int]:
     map: Dict[str, List[Point]] = defaultdict(list)
     lines = input.split('\n')
 
@@ -56,10 +78,7 @@ def parse_input(input: str) -> Map:
             if char != '.':
                 map[char].append((row, col))
 
-    return map
+    return (map, len(lines))
 
 def get_vec_from_points(a: Point, b: Point) -> tuple[int, int]:
     return (a[0] - b[0], a[1] - b[1])
-
-def sum_vec(a: Point, vec: tuple[int, int]) -> Point:
-    return (a[0] + vec[0], a[0] + vec[1])

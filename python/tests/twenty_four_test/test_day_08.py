@@ -17,4 +17,4 @@ def test_part_one():
     assert day_08.part_one(input) == 14
 
 def test_part_two():
-    assert day_08.part_two(input) == 0
+    assert day_08.part_two(input) == 34
