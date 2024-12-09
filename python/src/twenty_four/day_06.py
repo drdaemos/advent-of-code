@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Dict, List, Set
 
+from tqdm import tqdm
+
 # from tqdm import tqdm
 
 # coordinate within map as (row, col)
@@ -47,7 +49,7 @@ def part_two(input: str) -> int:
     working_blocks = 0
     map = parse_map(input)
     visited = simulate_path(map)
-    for point in visited:
+    for point in tqdm(visited):
         map_with_block = get_map_with_new_wall(map, point)
         if detect_loop(map_with_block, False):
             working_blocks += 1
