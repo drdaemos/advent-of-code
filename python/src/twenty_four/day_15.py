@@ -27,29 +27,24 @@ def main():
     except:
         print(" Input malformed / not found, expected to have `./inputs/day_15.txt`")
 
-def part_one(input: str) -> int:
-    game_map, moves, start = parse_input(input)
+def part_one(input: str, debug = False) -> int:
+    map, moves, start = parse_input(input)
+    return run_simulation(map, moves, start, debug)
+
+def part_two(input: str, debug = False) -> int:
+    map, moves, start = parse_input(input, True)
+    return run_simulation(map, moves, start, debug)
+
+def run_simulation(map: Map, moves: List[Direction], start: Point, debug: bool) -> int:
     current_pos = start
-    bottom_right = list(game_map)[-1]
+    bottom_right = list(map)[-1]
 
     for move in moves:
-        current_pos = simulate_move(game_map, move, current_pos)
+        current_pos = simulate_move(map, move, current_pos)
 
-    print_map(game_map, current_pos, int(bottom_right.real) + 1)
+    if debug: print_map(map, current_pos, int(bottom_right.real) + 1)
 
-    return calculate_box_coordinates(game_map)
-
-def part_two(input: str) -> int:
-    game_map, moves, start = parse_input(input, True)
-    current_pos = start
-    bottom_right = list(game_map)[-1]
-
-    for move in moves:
-        current_pos = simulate_move(game_map, move, current_pos)
-
-    print_map(game_map, current_pos, int(bottom_right.real) + 1)
-
-    return calculate_box_coordinates(game_map)
+    return calculate_box_coordinates(map)
 
 def calculate_box_coordinates(map: Map) -> int:
     sum = 0
