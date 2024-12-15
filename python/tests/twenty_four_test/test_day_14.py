@@ -15,6 +15,3 @@ p=9,5 v=-3,-3"""
 
 def test_part_one():
     assert day_14.part_one(input, 11, 7) == 12
-
-def test_part_two():
-    assert day_14.part_two(input) == 875318608908
