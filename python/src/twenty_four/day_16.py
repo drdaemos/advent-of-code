@@ -87,7 +87,7 @@ def a_star_least_turns(walls, start, end) -> List[Point]:
                     best_turn_count[next_point] = new_turns
                     best_path_length[next_point] = new_path_length
                     
-                    priority = new_turns * 1000 + new_path_length + manhattan_distance(next_point, end)
+                    priority = calculate_score(path)
                     heapq.heappush(open_set, (priority, hash(next_point), next_point, path + [next_point], d, new_turns))
 
     for i, path in enumerate(best_paths):
