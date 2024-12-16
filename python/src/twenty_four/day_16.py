@@ -21,13 +21,49 @@ def main():
 
 def part_one(input: str, debug = False) -> int:
     walls, start, end = parse_input(input)
-    path = a_star_least_turns(walls, start, end)
-    print(start, "->", end)
-    print_map(walls, start, end, path)
+    path = find_path_least_turns(walls, start, end, complex(1, 0), start)
+    if path is None:
+        raise Exception('Path not found')
     return calculate_score(path)
 
 def part_two(input: str, debug = False) -> int:
-    return 0
+    walls, start, end = parse_input(input)
+    path = find_path_least_turns(walls, start, end, complex(1, 0), start)
+    if path is None:
+        raise Exception('Best path not found')
+
+    alternatives = find_alternatives(walls, start, end, path)
+
+    # calculate set of points
+    points = set(path)
+    for item in alternatives:
+        points.update(item)
+
+    if debug: print_map(walls, start, end, list(points))
+
+    return len(points)
+
+def find_alternatives(walls: Walls, start: Point, end: Point, best_path: List[Point]) -> List[List[Point]]:
+    best_score = calculate_score(best_path)
+    # reversed_path = list(reversed(best_path))
+    reversed_path = best_path
+    alternatives = []
+    # walk back and spawn pathfinding on each possible alternative route
+    for i, node in enumerate(reversed_path):
+        # fully traced
+        if node == end:
+            break
+    
+        path_before = reversed_path[:i+1]
+        # ignore actual path and try look for alternatives
+        for d in [1, -1, 1j, -1j]:
+            next_point = node + d
+            if next_point not in walls and next_point not in reversed_path:
+                alternative = find_path_least_turns(walls, next_point, end, d, node)
+                if alternative is not None:
+                    alternatives.append(list(path_before + alternative))
+    
+    return list(filter(lambda path: calculate_score(path) == best_score, alternatives))
 
 def print_map(walls: Walls, start: Point, end: Point, path: List[Point]):
     print()
@@ -52,49 +88,36 @@ def manhattan_distance(a, b):
     # Calculate the Manhattan distance between two points in complex form
     return int(abs(a.real - b.real) + abs(a.imag - b.imag))
 
-def a_star_least_turns(walls, start, end) -> List[Point]:
+def find_path_least_turns(walls: Walls, start: Point, end: Point, direction: complex, ban_start: Point) -> List[Point] | None:
     # Directions represented as complex unit vectors
     directions = [1, -1, 1j, -1j]
     
-    best_paths = []
-    open_set = []
-    heapq.heappush(open_set, (0, hash(start), start, [start], None, 0))  # (priority, current, path, direction, turns)
+    tiebreak = 0
+    open_set: List[tuple[int, int, Point, List[Point], complex, int]] = []
+    heapq.heappush(open_set, (0, tiebreak, start, [start], complex(1, 0), 0))  # (priority, tiebreak, current, path, direction, turns)
     best_turn_count = {start: 0}
-    best_path_length = {start: 0}
     
     while open_set:
-        _, point_hash, current, path, prev_direction, turns = heapq.heappop(open_set)
+        _, _, current, path, prev_direction, turns = heapq.heappop(open_set)
 
         if current == end:
-            best_paths.append(path)
-            if len(best_paths) > 10:
-                break
+            return path
         
         for d in directions:
             next_point = current + d
-            if next_point not in walls:
+            if next_point not in walls and next_point not in path and next_point != ban_start:
+
                 new_turns = turns
-                if prev_direction is not None and d != prev_direction:
+                if d != prev_direction:
                     new_turns += 1
 
-                new_path_length = len(path) + 1
-
-                # Check if this path is better (less turns or shorter) than previously found path
-                if (next_point not in best_turn_count or
-                    new_turns < best_turn_count[next_point] or
-                    (new_turns == best_turn_count[next_point] and new_path_length < best_path_length[next_point])):
-                    
+                # Check if this path is better (less turns) than previously found path
+                if next_point not in best_turn_count or new_turns <= best_turn_count[next_point]:
                     best_turn_count[next_point] = new_turns
-                    best_path_length[next_point] = new_path_length
-                    
-                    priority = calculate_score(path)
-                    heapq.heappush(open_set, (priority, hash(next_point), next_point, path + [next_point], d, new_turns))
+                    tiebreak += 1
+                    heapq.heappush(open_set, (calculate_score(path), tiebreak, next_point, path + [next_point], d, new_turns))
 
-    for i, path in enumerate(best_paths):
-        print('Path #', i)
-        print(path)
-
-    return best_paths[0]
+    return None
 
 # Calculate number of turns in a path
 def calculate_turns(path) -> int:
