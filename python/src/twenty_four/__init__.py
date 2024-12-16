@@ -9,6 +9,7 @@ from . import day_12
 from . import day_13
 from . import day_14
 from . import day_15
+from . import day_16
 
 def main():
     day_05.main()
@@ -22,6 +23,7 @@ def main():
     day_13.main()
     day_14.main()
     day_15.main()
+    day_16.main()
 
 if __name__ == "__main__":
     main()
