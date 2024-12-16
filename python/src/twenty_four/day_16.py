@@ -84,10 +84,6 @@ def print_map(walls: Walls, start: Point, end: Point, path: List[Point]):
                 print('#', end="")
         print()
 
-def manhattan_distance(a, b):
-    # Calculate the Manhattan distance between two points in complex form
-    return int(abs(a.real - b.real) + abs(a.imag - b.imag))
-
 def find_path_least_turns(walls: Walls, start: Point, end: Point, direction: complex, ban_start: Point) -> List[Point] | None:
     # Directions represented as complex unit vectors
     directions = [1, -1, 1j, -1j]
