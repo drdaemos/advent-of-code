@@ -7,7 +7,7 @@ type Point = tuple[int, int]
 # dict of different freq types and all antennas belonging to this type
 type Map = Dict[str, List[Point]]
 
-def main():
+def main(debug = False):
     print("Advent of Code 2024 - day 8")
     try:
         input = open("./inputs/day_08.txt").read()

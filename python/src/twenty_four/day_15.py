@@ -18,7 +18,7 @@ type Map = Dict[Point, Kind]
 # .real is x, .imag is y
 type Point = complex
 
-def main():
+def main(debug = False):
     print("Advent of Code 2024 - day 15")
     try:
         input = open("./inputs/day_15.txt").read()

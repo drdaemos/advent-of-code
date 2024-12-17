@@ -8,7 +8,7 @@ class Equation:
     left: int
     right: List[int]
 
-def main():
+def main(debug = False):
     print("Advent of Code 2024 - day 7")
     try:
         input = open("./inputs/day_07.txt").read()

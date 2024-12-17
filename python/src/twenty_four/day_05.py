@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Dict, List
 
-def main():
+def main(debug = False):
     print("Advent of Code 2024 - day 5")
     try:
         input = open("./inputs/day_05.txt").read()

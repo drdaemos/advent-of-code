@@ -2,7 +2,7 @@ from functools import lru_cache
 import math
 from typing import Iterable, List
 
-def main():
+def main(debug = False):
     print("Advent of Code 2024 - day 11")
     try:
         input = open("./inputs/day_11.txt").read()

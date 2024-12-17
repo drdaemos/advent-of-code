@@ -1,16 +1,14 @@
 from dataclasses import dataclass
 import re
-from typing import List, Dict, Set
+from typing import List
 import numpy as np
-from collections import defaultdict, deque
-from math import isclose
 
 @dataclass
 class LinearEquationSystem:
     coefficients: List[List[int]]
     constants: List[int]
 
-def main():
+def main(debug = False):
     print("Advent of Code 2024 - day 13")
     try:
         input = open("./inputs/day_13.txt").read()

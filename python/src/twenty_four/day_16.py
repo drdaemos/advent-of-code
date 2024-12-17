@@ -1,8 +1,5 @@
 import heapq
-import os
-from random import randint
-from typing import Deque, List, Sequence, Set
-from collections import deque
+from typing import List, Set
 
 # walls on map
 type Walls = Set[Point]
@@ -10,12 +7,12 @@ type Walls = Set[Point]
 # .real is x, .imag is y
 type Point = complex
 
-def main():
+def main(debug = False):
     print("Advent of Code 2024 - day 16")
     try:
         input = open("./inputs/day_16.txt").read()
-        print(" Part one: %d" % part_one(input))
-        print(" Part two: %d" % part_two(input))
+        print(" Part one: %d" % part_one(input, debug))
+        print(" Part two: %d" % part_two(input, debug))
     except (ValueError, FileNotFoundError):
         print(" Input malformed / not found, expected to have `./inputs/day_16.txt`")
 
@@ -24,6 +21,9 @@ def part_one(input: str, debug = False) -> int:
     path = find_path_least_turns(walls, start, end, complex(1, 0), start)
     if path is None:
         raise Exception('Path not found')
+    
+    if debug: print_map(walls, start, end, list(path))
+
     return calculate_score(path)
 
 def part_two(input: str, debug = False) -> int:

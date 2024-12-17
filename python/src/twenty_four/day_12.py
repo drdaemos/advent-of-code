@@ -1,7 +1,7 @@
 from typing import List, Dict, Set
 from collections import defaultdict, deque
 
-def main():
+def main(debug = False):
     print("Advent of Code 2024 - day 12")
     try:
         input = open("./inputs/day_12.txt").read()
