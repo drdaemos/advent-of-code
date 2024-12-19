@@ -13,17 +13,17 @@ def main(debug = False):
 
 def part_one(input: str, debug = False) -> int:
     tokens, queries = parse_input(input)
-    valid_queries = sum([1 for i in queries if valid_combindations(tokens, i)])
+    valid_queries = sum([1 for i in queries if valid_combinations(tokens, i)])
     return valid_queries
 
 def part_two(input: str, debug = False) -> int:
     tokens, queries = parse_input(input)
-    valid_queries = sum([valid_combindations(tokens, i, debug) for i in queries])
+    valid_queries = sum([valid_combinations(tokens, i, debug) for i in queries])
     return valid_queries
 
 combination_cache: Dict[str, int] = {}
 
-def valid_combindations(tokens: Set[str], query: str, debug = False) -> int:
+def valid_combinations(tokens: Set[str], query: str, debug = False) -> int:
 
     @cached(combination_cache)
     def search(part: str):
