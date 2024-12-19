@@ -1,6 +1,6 @@
 from collections import defaultdict
 from typing import Dict, List, Set
-from functools import cache
+from cachetools import cached
 
 def main(debug = False):
     print("Advent of Code 2024 - day 19")
@@ -13,7 +13,7 @@ def main(debug = False):
 
 def part_one(input: str, debug = False) -> int:
     tokens, queries = parse_input(input)
-    valid_queries = sum([(1 if valid_combindations(tokens, i) > 0 else 0) for i in queries])
+    valid_queries = sum([1 for i in queries if valid_combindations(tokens, i)])
     return valid_queries
 
 def part_two(input: str, debug = False) -> int:
@@ -21,10 +21,11 @@ def part_two(input: str, debug = False) -> int:
     valid_queries = sum([valid_combindations(tokens, i, debug) for i in queries])
     return valid_queries
 
-def valid_combindations(tokens: Set[str], query: str, debug = False) -> int:
-    if debug: print(query)
+combination_cache: Dict[str, int] = {}
 
-    @cache
+def valid_combindations(tokens: Set[str], query: str, debug = False) -> int:
+
+    @cached(combination_cache)
     def search(part: str):
         if part == '':
             return 1
@@ -38,7 +39,7 @@ def valid_combindations(tokens: Set[str], query: str, debug = False) -> int:
         return total
     
     valid = search(query)
-    if debug: print(valid)
+    if debug: print(query, valid)
 
     return valid
 

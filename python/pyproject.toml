@@ -11,6 +11,8 @@ dependencies = [
     "rich>=13.9.4",
     "tqdm>=4.67.1",
     "types-tqdm>=4.67.0.20241119",
+    "cachetools>=5.5.0",
+    "types-cachetools>=5.5.0.20240820",
 ]
 
 [build-system]
