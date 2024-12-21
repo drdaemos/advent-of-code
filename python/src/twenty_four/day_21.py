@@ -1,9 +1,7 @@
 from enum import Enum, auto
 from functools import cache
-from itertools import pairwise
 from typing import List
-from matplotlib import pyplot as plt
-from networkx import Graph, all_shortest_paths, draw, draw_networkx_edge_labels, get_edge_attributes, get_node_attributes, shortest_path, single_source_shortest_path, spring_layout
+from networkx import Graph, all_shortest_paths
 
 # +---+---+---+
 # | 7 | 8 | 9 |
@@ -117,5 +115,5 @@ def find_minimal_path(code: str, depth: int, type: KeypadType) -> int:
         else:
             # On higher depths -> generate all paths from higher-level paths and count shortest
             length += min(find_minimal_path(path, depth - 1, KeypadType.ARROW) for path in paths)
-            
+
     return length
