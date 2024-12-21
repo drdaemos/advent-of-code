@@ -7,24 +7,28 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "cachetools" },
+    { name = "networkx" },
     { name = "numpy" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "rich" },
     { name = "tqdm" },
     { name = "types-cachetools" },
+    { name = "types-networkx" },
     { name = "types-tqdm" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "cachetools", specifier = ">=5.5.0" },
+    { name = "networkx", specifier = ">=3.4.2" },
     { name = "numpy", specifier = ">=2.2.0" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest-asyncio", specifier = ">=0.25.0" },
     { name = "rich", specifier = ">=13.9.4" },
     { name = "tqdm", specifier = ">=4.67.1" },
     { name = "types-cachetools", specifier = ">=5.5.0.20240820" },
+    { name = "types-networkx", specifier = ">=3.4.2.20241115" },
     { name = "types-tqdm", specifier = ">=4.67.0.20241119" },
 ]
 
@@ -74,6 +78,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba", size = 8729 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979 },
+]
+
+[[package]]
+name = "networkx"
+version = "3.4.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fd/1d/06475e1cd5264c0b870ea2cc6fdb3e37177c1e565c43f56ff17a10e3937f/networkx-3.4.2.tar.gz", hash = "sha256:307c3669428c5362aab27c8a1260aa8f47c4e91d3891f48be0141738d8d053e1", size = 2151368 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b9/54/dd730b32ea14ea797530a4479b2ed46a6fb250f682a9cfb997e968bf0261/networkx-3.4.2-py3-none-any.whl", hash = "sha256:df5d4365b724cf81b8c6a7312509d0c22386097011ad1abe274afd5e9d3bbc5f", size = 1723263 },
 ]
 
 [[package]]
@@ -200,6 +213,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/c2/7e/ad6ba4a56b2a994e0f0a04a61a50466b60ee88a13d10a18c83ac14a66c61/types-cachetools-5.5.0.20240820.tar.gz", hash = "sha256:b888ab5c1a48116f7799cd5004b18474cd82b5463acb5ffb2db2fc9c7b053bc0", size = 4198 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/27/4d/fd7cc050e2d236d5570c4d92531c0396573a1e14b31735870e849351c717/types_cachetools-5.5.0.20240820-py3-none-any.whl", hash = "sha256:efb2ed8bf27a4b9d3ed70d33849f536362603a90b8090a328acf0cd42fda82e2", size = 4149 },
+]
+
+[[package]]
+name = "types-networkx"
+version = "3.4.2.20241115"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9e/c9/57bf6008555730b88829a4db5a52824055e9580a6971be03e1f867a6fa78/types-networkx-3.4.2.20241115.tar.gz", hash = "sha256:d669b650cf6c6c9ec879a825449eb04a5c10742f3109177e1683f57ee49e0f59", size = 48780 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a6/d5/16c7cd6bfd4f606e8af1ca85aa0b7d481a478dfd89447f2591b7dbc73141/types_networkx-3.4.2.20241115-py3-none-any.whl", hash = "sha256:f0c382924d6614e06bf0b1ca0b837b8f33faa58982bc086ea762efaf39aa98dd", size = 125475 },
 ]
 
 [[package]]

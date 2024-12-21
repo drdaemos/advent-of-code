@@ -14,6 +14,7 @@ from . import day_16
 from . import day_17
 from . import day_18
 from . import day_19
+from . import day_20
 
 def main():
     args = parse_args()
@@ -34,6 +35,7 @@ def main():
         day_17.main,
         day_18.main,
         day_19.main,
+        day_20.main,
     ]
 
     if args.solution:

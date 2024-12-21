@@ -13,6 +13,8 @@ dependencies = [
     "types-tqdm>=4.67.0.20241119",
     "cachetools>=5.5.0",
     "types-cachetools>=5.5.0.20240820",
+    "networkx>=3.4.2",
+    "types-networkx>=3.4.2.20241115",
 ]
 
 [build-system]
