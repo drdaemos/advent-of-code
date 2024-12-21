@@ -23,7 +23,7 @@ def part_one(input: str, threshold: int, debug = False) -> int:
     for i, node in enumerate(path):
         for direction in [2, -2, 2j, -2j]:
             # if candidate node shortcuts the path
-            if is_good_shortcut(i, node + direction, threshold, path):
+            if is_good_shortcut(node, node + direction, path[i+threshold:]):
                 cheats_count += 1
 
     return cheats_count
@@ -35,19 +35,20 @@ def part_two(input: str, threshold: int, debug = False) -> int:
 
     cheats_count = 0
     for i, node in enumerate(tqdm(path)):
+        future_path = path[i+threshold:]
         for candidate in [x for x in path if manhattan_distance(node, x) <= 20 and node != x]:
             # if candidate node shortcuts the path
-            if is_good_shortcut(i, candidate, threshold, path):
+            if is_good_shortcut(node, candidate, future_path):
                 if debug: print_map(graph, 15, node, candidate, [])
                 cheats_count += 1
 
     return cheats_count
 
-def is_good_shortcut(entry_index: int, exit: Point, threshold: int, path: List[Point]) -> bool:
-    if exit in path[entry_index+1:]:
-        skipped_length = path.index(exit, entry_index)
-        cheat_distance = manhattan_distance(path[entry_index], exit)
-        if (skipped_length - entry_index - cheat_distance) >= threshold:
+def is_good_shortcut(entry: Point, exit: Point, path: List[Point]) -> bool:
+    if exit in path:
+        skipped_length = path.index(exit)
+        cheat_distance = manhattan_distance(entry, exit)
+        if (skipped_length - cheat_distance) >= 0:
             return True
 
     return False
