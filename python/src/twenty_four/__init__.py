@@ -1,20 +1,5 @@
 from argparse import ArgumentParser, Namespace
-from . import day_05
-from . import day_06
-from . import day_07
-from . import day_08
-from . import day_09
-from . import day_10
-from . import day_11
-from . import day_12
-from . import day_13
-from . import day_14
-from . import day_15
-from . import day_16
-from . import day_17
-from . import day_18
-from . import day_19
-from . import day_20
+from . import day_05, day_06, day_07, day_08, day_09, day_10, day_11, day_12, day_13, day_14, day_15, day_16, day_17, day_18, day_19, day_20, day_21
 
 def main():
     args = parse_args()
@@ -36,6 +21,7 @@ def main():
         day_18.main,
         day_19.main,
         day_20.main,
+        day_21.main,
     ]
 
     if args.solution:
