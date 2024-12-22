@@ -1,9 +1,11 @@
 from collections import defaultdict
 from functools import cache
-from typing import List, Dict
+from typing import Iterable, List, Dict
 from itertools import islice
 from collections import deque
 from tqdm import tqdm
+
+type Sequence = tuple[int, int, int, int]
 
 def main(debug = False):
     print("Advent of Code 2024 - day 22")
@@ -27,9 +29,9 @@ def part_two(input: str, debug = False) -> int:
     return find_most_common_set(buyers, 2000)
 
 def find_most_common_set(buyers: List[int], rotations: int) -> int:
-    bananas: Dict[tuple[int, int, int, int], int] = defaultdict(int)
+    bananas: Dict[Sequence, int] = defaultdict(int)
     for buyer in tqdm(buyers):
-        seen_in_buyer: Dict[tuple[int, int, int, int], int] = defaultdict(int)
+        seen_in_buyer: Dict[Sequence, int] = defaultdict(int)
         numbers = generate_numbers(buyer, rotations)
         ones = list(map(lambda x: x % 10, numbers))
         changes = calculate_changes([buyer % 10] + ones)
@@ -43,7 +45,7 @@ def find_most_common_set(buyers: List[int], rotations: int) -> int:
 
     return max(bananas.values())
 
-def calculate_changes(numbers):    
+def calculate_changes(numbers: List[int]) -> List[int]:    
     if len(numbers) < 2:
         return []
     
@@ -78,11 +80,11 @@ def generate_numbers(initial: int, count: int) -> List[int]:
 
     return numbers
 
-def groupwise(iterable, n): 
+def groupwise(iterable: Iterable, n: int): 
     if n < 1:
         return None
 
-    it = iter(iterable) 
+    it = iter(iterable)
     accum = deque(islice(it, n-1), maxlen=n)
         
     for _ in map(accum.append, it):
