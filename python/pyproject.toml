@@ -16,6 +16,7 @@ dependencies = [
     "networkx>=3.4.2",
     "types-networkx>=3.4.2.20241115",
     "matplotlib>=3.10.0",
+    "pydot>=3.0.3",
 ]
 
 [build-system]
