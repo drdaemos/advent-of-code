@@ -1,9 +1,8 @@
 from collections import defaultdict
-from itertools import combinations
 from operator import xor, and_, or_
 import operator
-from typing import Any, Callable, Dict, List, Set
-from networkx import DiGraph, NetworkXNoPath, NodeNotFound, draw, draw_networkx, draw_networkx_edges, draw_networkx_labels, draw_networkx_nodes, get_node_attributes, multipartite_layout, neighbors, set_node_attributes, shortest_path, shortest_path_length, spring_layout, topological_generations
+from typing import Any, Callable, Dict, Set
+from networkx import DiGraph, draw_networkx, get_node_attributes, set_node_attributes
 import matplotlib.pyplot as plt
 import networkx as nx
 
