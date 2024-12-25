@@ -127,9 +127,5 @@ def test_part_one():
     assert day_24.part_one(input_carry_adder_faulty) == 3 # c01 swapped with z01
 
 def test_part_two():
-    # assert day_24.part_two(input_carry_adder_working) == ""
-    assert day_24.part_two(input_carry_adder_faulty, True) == "c01,z01"
-    # assert day_24.part_two(input_p2) == "z00,z01,z02,z05"
-    # assert day_24.part_two(input_long) == ""
-
-    # dkr,ggk,hhh,htp,rhv,z05,z15,z20
+    assert day_24.part_two(input_carry_adder_working) == ""
+    assert day_24.part_two(input_carry_adder_faulty) == "c01,z01"
