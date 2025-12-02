@@ -47,8 +47,8 @@ catch_discover_tests(aoc_tests)
 find_program(CLANG_FORMAT clang-format)
 if(CLANG_FORMAT)
     file(GLOB_RECURSE ALL_CXX_SOURCE_FILES
-        ${PROJECT_SOURCE_DIR}/src/*.cpp
-        ${PROJECT_SOURCE_DIR}/src/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
     )
     add_custom_target(format
         COMMAND ${CLANG_FORMAT} -i ${ALL_CXX_SOURCE_FILES}
