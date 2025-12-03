@@ -2,7 +2,6 @@
 
 #include <fmt/core.h>
 
-#include <regex>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -16,7 +15,7 @@ struct Instruction {
   int steps;
 };
 
-int apply_instruction(int dial, const Instruction& instruction) {
+int apply_instruction(int dial, const Instruction &instruction) {
   if (!instruction.clockwise) {
     dial -= instruction.steps;
   } else if (instruction.clockwise) {
@@ -28,7 +27,7 @@ int apply_instruction(int dial, const Instruction& instruction) {
   return dial;
 }
 
-std::vector<Instruction> parse_instructions(const std::string& input) {
+std::vector<Instruction> parse_instructions(const std::string &input) {
   std::vector<Instruction> instructions;
   std::istringstream stream(input);
   std::string line;
@@ -44,12 +43,12 @@ void run() {
   fmt::print("{}\n", part2(input));
 }
 
-std::string part1(const std::string& input) {
+std::string part1(const std::string &input) {
   auto instructions = parse_instructions(input);
   auto at_zero = 0;
   auto dial = 50;
 
-  for (const auto& instruction : instructions) {
+  for (const auto &instruction : instructions) {
     dial = apply_instruction(dial, instruction);
     dial = dial % 100;
     at_zero += dial == 0 ? 1 : 0;
@@ -58,12 +57,12 @@ std::string part1(const std::string& input) {
   return std::to_string(at_zero);
 }
 
-std::string part2(const std::string& input) {
+std::string part2(const std::string &input) {
   auto instructions = parse_instructions(input);
   auto at_zero = 0;
   auto dial = 50;
 
-  for (const auto& instruction : instructions) {
+  for (const auto &instruction : instructions) {
     auto orig_dial = dial;
     dial = apply_instruction(dial, instruction);
     if (dial <= 0 && orig_dial > 0) {
@@ -77,4 +76,4 @@ std::string part2(const std::string& input) {
   return std::to_string(at_zero);
 }
 
-}  // namespace day_01
+} // namespace day_01

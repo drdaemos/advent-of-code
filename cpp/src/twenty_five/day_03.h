@@ -3,6 +3,6 @@
 
 namespace day_03 {
 void run();
-std::string part1(const std::string& input);
-std::string part2(const std::string& input);
-}  // namespace day_03
+std::string part1(const std::string &input);
+std::string part2(const std::string &input);
+} // namespace day_03

@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 namespace shared {
-std::string read_file(const std::string& file_path) {
+std::string read_file(const std::string &file_path) {
   std::ifstream file(file_path);
 
   if (!file.is_open()) {
@@ -17,4 +17,4 @@ std::string read_file(const std::string& file_path) {
 
   return buffer.str();
 }
-}  // namespace shared
+} // namespace shared

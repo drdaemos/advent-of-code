@@ -9,7 +9,7 @@
 #include "twenty_five/day_02.h"
 #include "twenty_five/day_03.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   argparse::ArgumentParser program("Advent of Code");
 
   program.add_argument("-d")
@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
   try {
     program.parse_args(argc, argv);
-  } catch (const std::exception& err) {
+  } catch (const std::exception &err) {
     fmt::print("Error: {}\n\n", err.what());
     return 1;
   }

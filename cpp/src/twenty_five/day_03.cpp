@@ -3,12 +3,9 @@
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
-#include <iostream>
 #include <numeric>
-#include <set>
 #include <sstream>
 #include <string>
-#include <tuple>
 #include <vector>
 
 #include "shared/file_utils.h"
@@ -30,14 +27,14 @@ struct BatteryToUse {
   int rank;
 };
 
-std::vector<Bank> parse_input(const std::string& input) {
+std::vector<Bank> parse_input(const std::string &input) {
   std::vector<Bank> banks;
   std::istringstream stream(input);
   std::string line;
   while (std::getline(stream, line)) {
     std::vector<int> batteries;
     for (char c : line) {
-      batteries.push_back(c - '0');  // convert char to int
+      batteries.push_back(c - '0'); // convert char to int
     }
     banks.push_back(Bank{batteries});
   }
@@ -57,21 +54,21 @@ BatteryToUse find_max_digit(std::vector<int> values, int min_rank, int place) {
   return BatteryToUse{max_value, rank};
 }
 
-auto format_as(const BatteryToUse& p) { return fmt::format("{}", p.value); }
+auto format_as(const BatteryToUse &p) { return fmt::format("{}", p.value); }
 
-long build_joltage(const std::vector<BatteryToUse>& digits) {
+long build_joltage(const std::vector<BatteryToUse> &digits) {
   std::string joltage_str;
-  for (const auto& digit : digits) {
+  for (const auto &digit : digits) {
     joltage_str += std::to_string(digit.value);
   }
   return std::stol(joltage_str);
 }
 
-std::string part1(const std::string& input) {
+std::string part1(const std::string &input) {
   auto banks = parse_input(input);
   std::vector<int> joltages = {};
 
-  for (const auto& bank : banks) {
+  for (const auto &bank : banks) {
     auto digit_1 = find_max_digit(bank.batteries, 0, 1);
     auto digit_2 = find_max_digit(bank.batteries, digit_1.rank + 1, 0);
 
@@ -82,13 +79,14 @@ std::string part1(const std::string& input) {
   return std::to_string(std::reduce(joltages.begin(), joltages.end(), 0));
 }
 
-std::string part2(const std::string& input) {
+std::string part2(const std::string &input) {
   auto banks = parse_input(input);
   std::vector<long> joltages = {};
 
-  for (const auto& bank : banks) {
+  for (const auto &bank : banks) {
     std::vector<BatteryToUse> digits = {};
     const int MAX_PLACES = 12;
+    int test, test2 = 0;
 
     for (int place = MAX_PLACES; place > 0; --place) {
       auto min_rank = 0;
@@ -106,4 +104,4 @@ std::string part2(const std::string& input) {
   return std::to_string(std::reduce(joltages.begin(), joltages.end(), 0L));
 }
 
-}  // namespace day_03
+} // namespace day_03

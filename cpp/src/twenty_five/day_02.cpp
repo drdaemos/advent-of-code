@@ -3,7 +3,6 @@
 #include <fmt/core.h>
 
 #include <numeric>
-#include <regex>
 #include <set>
 #include <sstream>
 #include <string>
@@ -26,7 +25,7 @@ struct Range {
   long long end;
 };
 
-std::vector<Range> parse_ranges(const std::string& input) {
+std::vector<Range> parse_ranges(const std::string &input) {
   std::vector<Range> ranges;
   std::istringstream stream(input);
   std::string line;
@@ -38,10 +37,10 @@ std::vector<Range> parse_ranges(const std::string& input) {
   return ranges;
 }
 
-std::string part1(const std::string& input) {
+std::string part1(const std::string &input) {
   auto ranges = parse_ranges(input);
   std::vector<long long> invalid = {};
-  for (const auto& range : ranges) {
+  for (const auto &range : ranges) {
     auto min_pattern_len = shared::digits(range.start) / 2;
     auto max_pattern_len = shared::digits(range.end) / 2;
 
@@ -60,10 +59,10 @@ std::string part1(const std::string& input) {
   return std::to_string(std::reduce(invalid.begin(), invalid.end(), 0LL));
 }
 
-std::string part2(const std::string& input) {
+std::string part2(const std::string &input) {
   auto ranges = parse_ranges(input);
   std::set<long long> invalid = {};
-  for (const auto& range : ranges) {
+  for (const auto &range : ranges) {
     auto max_pattern_len = shared::digits(range.end) / 2;
 
     auto start = std::pow(10, 0);
@@ -83,4 +82,4 @@ std::string part2(const std::string& input) {
   return std::to_string(std::reduce(invalid.begin(), invalid.end(), 0LL));
 }
 
-}  // namespace day_02
+} // namespace day_02
