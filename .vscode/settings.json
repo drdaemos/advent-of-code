@@ -66,6 +66,10 @@
         "map": "cpp",
         "__tree": "cpp",
         "set": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "span": "cpp",
+        "regex": "cpp",
+        "unordered_set": "cpp",
+        "__config": "cpp"
     }
 }
