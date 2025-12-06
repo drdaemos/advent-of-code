@@ -1,5 +1,6 @@
 #include "day_04.h"
 
+#include <algorithm>
 #include <complex>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
