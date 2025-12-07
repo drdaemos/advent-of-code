@@ -1,13 +1,12 @@
-#include <sstream>
 #pragma once
+
+#include <string>
+#include <vector>
 
 namespace shared {
 
-std::string repeat(std::string value, int n) {
-  std::ostringstream os;
-  for (int i = 0; i < n; i++)
-    os << value;
-  return os.str();
-}
+std::string repeat(std::string value, int n);
+
+std::vector<std::string> get_lines(const std::string &value);
 
 } // namespace shared
