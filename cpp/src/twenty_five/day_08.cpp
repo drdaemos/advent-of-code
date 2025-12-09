@@ -1,6 +1,7 @@
 #include "day_08.h"
 
 #include <algorithm>
+#include <cmath>
 #include <fmt/base.h>
 
 #include <fmt/ranges.h>
@@ -25,10 +26,7 @@ struct Node {
   int z;
 
   double euclidean_distance(const Node &other) const {
-    auto dx = static_cast<double>(x - other.x);
-    auto dy = static_cast<double>(y - other.y);
-    auto dz = static_cast<double>(z - other.z);
-    return std::sqrt(dx * dx + dy * dy + dz * dz);
+    return std::hypot(x - other.x, y - other.y, z - other.z);
   }
 
   bool operator==(const Node &other) const {
