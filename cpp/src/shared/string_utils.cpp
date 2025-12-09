@@ -1,3 +1,4 @@
+#include <ranges>
 #include <sstream>
 
 namespace shared {
@@ -17,4 +18,16 @@ std::vector<std::string> get_lines(const std::string &value) {
   }
   return result;
 }
+
+std::vector<std::string> split_string(const std::string &value,
+                                      const std::string delimiter) {
+  std::string_view string_view{value};
+  std::string_view delimiter_view{delimiter};
+
+  auto split_view = std::views::split(string_view, delimiter_view);
+  std::vector<std::string> tokens =
+      std::ranges::to<std::vector<std::string>>(split_view);
+  return tokens;
+}
+
 } // namespace shared

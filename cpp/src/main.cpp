@@ -12,6 +12,7 @@
 #include "twenty_five/day_05.h"
 #include "twenty_five/day_06.h"
 #include "twenty_five/day_07.h"
+#include "twenty_five/day_08.h"
 
 int main(int argc, char **argv) {
   argparse::ArgumentParser program("Advent of Code");
@@ -34,7 +35,7 @@ int main(int argc, char **argv) {
   std::map<int, std::function<void()>> solutions = {
       {1, day_01::run}, {2, day_02::run}, {3, day_03::run},
       {4, day_04::run}, {5, day_05::run}, {6, day_06::run},
-      {7, day_07::run},
+      {7, day_07::run}, {8, day_08::run},
   };
 
   auto it = solutions.find(day);
